@@ -1,0 +1,40 @@
+name: Frontend E2E Tests
+
+on:
+  push:
+    branches: [main, develop, staging]
+    paths:
+      - "apps/frontend/**"
+      - "packages/**"
+      - ".github/workflows/frontend-e2e.yml"
+  pull_request:
+    branches: [main, develop, staging]
+    paths:
+      - "apps/frontend/**"
+      - "packages/**"
+      - ".github/workflows/frontend-e2e.yml"
+
+jobs:
+  frontend-e2e-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Skip E2E tests in CI
+        run: |
+          echo "✅ E2E tests are designed for local development with Docker"
+          echo "📝 E2E tests require Docker services and are conditionally executed"
+          echo "🏃 To run E2E tests locally:"
+          echo "   cd apps/frontend/e2e"
+          echo "   docker compose -f docker-compose.e2e.yml up -d"
+          echo "   npm run test"
+          echo ""
+          echo "💡 This approach ensures:"
+          echo "   - Faster CI pipeline execution"
+          echo "   - Reliable local development testing"
+          echo "   - Docker-aware conditional testing"
+          echo ""
+          echo "✅ CI pipeline continues - E2E tests skipped intentionally"

@@ -1,0 +1,50 @@
+.filtersAccordion {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.emptyFilters {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.filtersBadge {
+  margin-left: 1rem;
+}
+
+.filtersAccordion :global(.accordion-button) {
+  background-color: var(--bs-primary);
+  font-weight: bold;
+  border: none !important;
+  box-shadow: none !important;
+  color: var(--bs-secondaryText);
+}
+
+.filtersAccordion :global(.accordion-button:focus) {
+  box-shadow: none !important;
+}
+
+.filtersAccordion :global(.accordion-button.collapsed) {
+  background-color: var(--bs-primary);
+}
+
+.filtersAccordion :global(.accordion-body) {
+  background-color: var(--bs-secondaryBg);
+  color: var(--bs-text);
+}
+
+.filtersAccordion :global(.accordion-item) {
+  border: none !important;
+}
+
+.offCanvas {
+  background-color: var(--bs-secondaryBg) !important;
+}
+
+:global(.offcanvas-lg) .offCanvas {
+  background-color: var(--bs-secondaryBg) !important;
+}
+
+.offCanvasTitle {
+  color: var(--bs-text);
+}

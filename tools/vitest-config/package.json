@@ -1,0 +1,44 @@
+{
+  "name": "@memoriaali/vitest-config",
+  "version": "1.0.0",
+  "description": "Shared Vitest configuration for Memoriaali v2.0 monorepo",
+  "main": "vitest.config.js",
+  "exports": {
+    ".": "./vitest.config.js",
+    "./node": "./configs/node.js",
+    "./react": "./configs/react.js"
+  },
+  "files": [
+    "vitest.config.js",
+    "configs/"
+  ],
+  "keywords": [
+    "vitest",
+    "testing",
+    "config",
+    "memoriaali",
+    "typescript",
+    "unit-tests"
+  ],
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.7.0",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitejs/plugin-react": "^5.0.1",
+    "jsdom": "^26.1.0",
+    "vitest": "^3.2.4",
+    "vite": "^7.1.3"
+  },
+  "peerDependencies": {
+    "vitest": "^2.0.0",
+    "vite": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "echo 'Vitest config - validated through dependent packages'",
+    "test:watch": "echo 'Vitest config - no watch mode needed'",
+    "test:coverage": "echo 'Vitest config - no coverage for config files'"
+  }
+}

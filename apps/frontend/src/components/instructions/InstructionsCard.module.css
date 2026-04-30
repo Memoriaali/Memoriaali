@@ -1,0 +1,20 @@
+.card {
+  margin-bottom: 2vh;
+  min-height: 24vh;
+  text-align: center;
+  background-color: var(--bs-primary) !important;
+  border-style: none !important;
+}
+
+.card_text {
+  font-size: 7vh;
+  color: var(--bs-secondaryText) !important;
+}
+
+.cardTitle {
+  color: var(--bs-secondaryText) !important;
+}
+
+.cardText {
+  color: var(--bs-secondaryText) !important;
+}

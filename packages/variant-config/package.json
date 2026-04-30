@@ -1,0 +1,45 @@
+{
+  "name": "@memoriaali/variant-config",
+  "version": "0.0.1",
+  "description": "Variant configuration system for Memoriaali",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@memoriaali/access-control": "workspace:*",
+    "@memoriaali/api-types": "workspace:*",
+    "@memoriaali/shared": "workspace:*",
+    "@types/lodash": "^4.17.21",
+    "@types/node": "^22.13.10",
+    "eslint": "^9.39.1",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "license": "MIT"
+}

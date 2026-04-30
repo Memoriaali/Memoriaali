@@ -1,0 +1,18 @@
+.title {
+  color: var(--bs-text);
+  margin-top: 2rem;
+}
+
+.text {
+  color: var(--bs-text);
+}
+
+.secondaryTitle {
+  color: var(--bs-text);
+  margin-top: 2rem;
+}
+
+.tertiaryTitle {
+  color: var(--bs-text);
+  margin-top: 1rem;
+}

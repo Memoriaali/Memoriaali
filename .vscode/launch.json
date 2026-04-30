@@ -1,0 +1,214 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🖥️ Frontend - Browser Debug",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/apps/frontend",
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///src/*": "${webRoot}/src/*",
+        "webpack:///*": "*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*"
+      },
+      "smartStep": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "trace": true,
+      "userDataDir": false,
+      "preLaunchTask": "Check Frontend Server"
+    },
+    {
+      "name": "⚙️ Frontend - Server Debug",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/frontend/node_modules/next/dist/bin/next",
+      "args": [
+        "dev"
+      ],
+      "cwd": "${workspaceFolder}/apps/frontend",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "restart": true,
+      "sourceMaps": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/apps/frontend/**",
+        "!**/node_modules/**"
+      ],
+      "outputCapture": "std"
+    },
+    {
+      "name": "🔧 Backend - API Debug",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/backend/src/index.ts",
+      "cwd": "${workspaceFolder}/apps/backend",
+      "runtimeArgs": [
+        "--loader",
+        "ts-node/esm",
+        "--inspect"
+      ],
+      "env": {
+        "NODE_ENV": "development",
+        "TS_NODE_PROJECT": "${workspaceFolder}/apps/backend/tsconfig.json"
+      },
+      "console": "integratedTerminal",
+      "restart": true,
+      "sourceMaps": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/apps/backend/**",
+        "!**/node_modules/**"
+      ],
+      "outputCapture": "std"
+    },
+    {
+      "name": "🗄️ Backend - Watch Mode Debug",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/backend/src/index.ts",
+      "cwd": "${workspaceFolder}/apps/backend",
+      "runtimeArgs": [
+        "--watch",
+        "--loader",
+        "ts-node/esm",
+        "--inspect"
+      ],
+      "env": {
+        "NODE_ENV": "development",
+        "TS_NODE_PROJECT": "${workspaceFolder}/apps/backend/tsconfig.json"
+      },
+      "console": "integratedTerminal",
+      "restart": false,
+      "protocol": "inspector",
+      "sourceMaps": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/apps/backend/**",
+        "!**/node_modules/**"
+      ],
+      "outputCapture": "std"
+    },
+    {
+      "name": "🧪 Backend - Test Debug",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/backend/node_modules/.bin/vitest",
+      "args": ["run", "--reporter=verbose"],
+      "cwd": "${workspaceFolder}/apps/backend",
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "console": "integratedTerminal",
+      "sourceMaps": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/apps/backend/**",
+        "!**/node_modules/**"
+      ]
+    },
+    {
+      "name": "🔍 Frontend - Test Debug",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/frontend/node_modules/.bin/vitest",
+      "args": ["run", "--reporter=verbose"],
+      "cwd": "${workspaceFolder}/apps/frontend",
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "console": "integratedTerminal",
+      "sourceMaps": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/apps/frontend/**",
+        "!**/node_modules/**"
+      ]
+    },
+    {
+      "name": "📦 Archiver - Worker Debug",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/archiver/src/main.ts",
+      "cwd": "${workspaceFolder}/apps/archiver",
+      "runtimeArgs": [
+        "--loader",
+        "ts-node/esm",
+        "--inspect"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "restart": true,
+      "sourceMaps": true,
+      "skipFiles": [
+        "<node_internals>/**",
+        "node_modules/**"
+      ],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/apps/archiver/**",
+        "!**/node_modules/**"
+      ],
+      "outputCapture": "std"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "🚀 Full Stack Debug",
+      "configurations": [
+        "🔧 Backend - API Debug",
+        "⚙️ Frontend - Server Debug",
+        "📦 Archiver - Worker Debug"
+      ],
+      "stopAll": true,
+      "preLaunchTask": "Check Database Connection"
+    },
+    {
+      "name": "🌐 Frontend Full Debug",
+      "configurations": [
+        "⚙️ Frontend - Server Debug",
+        "🖥️ Frontend - Browser Debug"
+      ],
+      "stopAll": true
+    },
+    {
+      "name": "🔄 Backend Watch Debug",
+      "configurations": [
+        "🗄️ Backend - Watch Mode Debug"
+      ],
+      "stopAll": true,
+      "preLaunchTask": "Check Database Connection"
+    },
+    {
+      "name": "🧪 Test All Debug",
+      "configurations": [
+        "🧪 Backend - Test Debug",
+        "🔍 Frontend - Test Debug"
+      ],
+      "stopAll": true
+    }
+  ]
+} 

@@ -1,0 +1,137 @@
+.modalBg {
+  background-color: var(--bs-modalBg);
+  color: var(--bs-text);
+}
+
+.modalHeader {
+  border-radius: 0%;
+}
+
+.modalTitle {
+  text-align: center;
+  width: 100%;
+}
+
+.customClose {
+  color: var(--bs-text);
+  font-size: 1.5rem;
+  border: none;
+  background: transparent;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.customClose:hover {
+  color: var(--bs-text);
+}
+
+.recordInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.timeLabel {
+  white-space: nowrap;
+}
+
+.splitContainer {
+  padding: 0.5rem 0.75rem;
+}
+
+.previewPlaceholder {
+  width: 100%;
+  height: 100%;
+}
+
+.questionsPane {
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+
+.controlsRow {
+  flex-wrap: wrap;
+}
+
+.recordingContainer {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+@media (max-width: 767.98px) {
+  .recordingContainer {
+    height: 220px;
+  }
+}
+
+.controlBtn {
+  width: 100%;
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .controlBtn {
+    padding-left: 0.875rem;
+    padding-right: 0.875rem;
+  }
+}
+
+.previewSolo {
+  width: 60%;
+  max-width: 860px;
+  height: 420px;
+  margin: 0 auto;
+}
+
+@media (max-width: 767.98px) {
+  .previewSolo {
+    width: 100%;
+    max-width: none;
+    height: 360px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991.98px) {
+  .previewSolo {
+    width: 85%;
+    max-width: 720px;
+    height: 400px;
+  }
+}
+
+.redRecordAnimation {
+  background: var(--bs-danger);
+  box-shadow: 0 0 0 0 rgba(255, 82, 82, 1);
+  animation: pulse-red 2s infinite;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  transform: scale(1);
+  margin-bottom: 15px;
+  min-width: 20px;
+  min-height: 20px;
+}
+
+@keyframes pulse-red {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+  }
+}

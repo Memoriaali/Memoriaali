@@ -1,0 +1,114 @@
+# Development environment for Memoriaali v2.0
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: memoriaali_root
+      MYSQL_DATABASE: memoriaali
+      MYSQL_USER: memoriaali
+      MYSQL_PASSWORD: memoriaali_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./tools/docker/mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # TypeScript Backend (when ready)
+  backend:
+    build:
+      context: .
+      dockerfile: apps/backend/Dockerfile
+      target: development
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=mysql://memoriaali:memoriaali_pass@mysql:3306/memoriaali
+      - JWT_SECRET=dev-secret-key
+      - SIP_SERVICE_URL=http://sip-service:8080
+    volumes:
+      - ./apps/backend:/app/apps/backend
+      - ./packages:/app/packages
+      - /app/node_modules
+      - document_storage:/app/storage
+    depends_on:
+      mysql:
+        condition: service_healthy
+    command: pnpm --filter backend dev
+    profiles:
+      - backend
+
+  # React Frontend (when ready)  
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+      target: development
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:3001
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./apps/frontend:/app/apps/frontend
+      - ./packages:/app/packages
+      - /app/node_modules
+    depends_on:
+      - backend
+    command: pnpm --filter frontend dev
+    profiles:
+      - frontend
+
+  # Java SIP Service (when ready)
+  sip-service:
+    build:
+      context: .
+      dockerfile: apps/sip-service/Dockerfile
+      target: development
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=development
+      - SIP_OUTPUT_PATH=/app/sip-packages
+    volumes:
+      - sip_packages:/app/sip-packages
+      - document_storage:/app/documents:ro
+    depends_on:
+      - mysql
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    profiles:
+      - sip
+
+  # Development utilities
+  prisma-studio:
+    build:
+      context: .
+      dockerfile: packages/database/Dockerfile
+    environment:
+      - DATABASE_URL=mysql://memoriaali:memoriaali_pass@mysql:3306/memoriaali
+    ports:
+      - "5555:5555"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    profiles:
+      - tools
+
+volumes:
+  mysql_data:
+  document_storage:
+  sip_packages:
+
+networks:
+  default:
+    name: memoriaali-dev

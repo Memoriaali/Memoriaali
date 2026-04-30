@@ -1,0 +1,12 @@
+.container {
+  margin-top: 2vh;
+  background-color: var(--bs-primary) !important;
+  text-align: center;
+  padding-top: 2vh;
+  margin-bottom: 1rem;
+}
+
+.header {
+  margin-bottom: 4vh;
+  color: var(--bs-secondaryText) !important;
+}

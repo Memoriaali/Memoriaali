@@ -1,0 +1,6 @@
+node_modules/
+test-results/
+playwright-report/
+tests/utils/.auth/
+.env.e2e
+*.log 

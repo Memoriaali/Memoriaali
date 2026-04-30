@@ -1,0 +1,56 @@
+.modalBg {
+  background-color: var(--bs-modalBg);
+  color: var(--bs-text);
+}
+
+.modalHeader {
+  border-radius: 0%;
+}
+
+.modalTitle {
+  text-align: center;
+  width: 100%;
+}
+
+.modalText {
+  text-align: center;
+}
+
+.customClose {
+  color: var(--bs-text);
+  font-size: 1.5rem;
+  border: none;
+  background: transparent;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.customClose:hover {
+  color: var(--bs-text);
+}
+
+.recordingContainer {
+  width: 95%;
+  height: 320px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  margin: 1rem;
+}
+
+.cardStyle {
+  margin-bottom: 2vh;
+  background-color: var(--bs-secondaryBg);
+  color: var(--bs-text);
+}
+
+.cardTextCenter {
+  display: flex;
+  align-items: center;
+}
+
+.showButton {
+  float: right;
+}

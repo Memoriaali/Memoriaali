@@ -1,0 +1,15 @@
+.contentHeader {
+  margin-bottom: 2rem;
+}
+
+@media only screen and (max-width: 433px) {
+  .contentHeader {
+    margin-bottom: 1rem;
+  }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 434px) {
+  .contentHeader {
+    margin-bottom: 1rem;
+  }
+}

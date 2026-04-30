@@ -1,0 +1,92 @@
+name: Quality Gates
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - staging
+      - main
+  push:
+    branches:
+      - develop
+      - staging
+      - main
+
+jobs:
+  quality-gates:
+    name: Quality Gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.7.0
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - name: Setup pnpm cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Setup Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client and Zod schemas
+        run: pnpm --filter database db:generate
+
+      - name: Run quality gates
+        run: pnpm quality-gates
+        env:
+          CI: true
+          NODE_ENV: test
+
+      - name: Build verification
+        run: pnpm build
+        env:
+          CI: true
+          NODE_ENV: production
+
+  quality-status:
+    name: Quality Gates Status
+    runs-on: ubuntu-latest
+    needs: quality-gates
+    if: always()
+    steps:
+      - name: Check quality gates status
+        run: |
+          if [ "${{ needs.quality-gates.result }}" != "success" ]; then
+            echo "❌ Quality gates failed"
+            echo "Pull request cannot be merged until all quality gates pass"
+            exit 1
+          else
+            echo "✅ All quality gates passed"
+            echo "Pull request is ready for review and merge"
+          fi

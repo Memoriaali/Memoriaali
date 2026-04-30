@@ -1,0 +1,39 @@
+.card {
+  position: relative;
+  min-height: 100%;
+  background-color: var(--bs-fileCardBg);
+  color: var(--bs-text);
+}
+
+.filesCardButton {
+  margin-bottom: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.checkboxContainer {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.cardCheckbox {
+  width: 20px;
+  height: 20px;
+}
+
+.card.checked {
+  border: 1px solid var(--bs-primary);
+}
+
+.linkCardImage {
+  height: 25vh;
+  object-fit: cover;
+}
+
+.cardTitle {
+  color: var(--bs-text);
+}
+
+.cardText {
+  color: var(--bs-text);
+}

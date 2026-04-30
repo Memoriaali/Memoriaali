@@ -1,0 +1,67 @@
+.manageUserModal {
+  z-index: 1060;
+}
+
+.manageUsersText {
+  text-align: center;
+}
+
+.trash {
+  font-size: 22px;
+}
+
+.trash:hover {
+  cursor: pointer;
+}
+
+.tdCenter {
+  text-align: center;
+}
+
+.modalBg {
+  background-color: var(--bs-modalBg);
+  color: var(--bs-text);
+}
+
+.modalTitle {
+  text-align: center;
+  width: 100%;
+}
+
+.filterTitle {
+  text-align: left;
+}
+
+.filterLabel {
+  padding: 0 0.5rem;
+  font-weight: bold;
+}
+
+.savingInfo {
+  color: var(--bs-secondary);
+}
+
+.customClose {
+  color: var(--bs-text);
+  font-size: 1.5rem;
+  border: none;
+  background: transparent;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.customClose:hover {
+  color: var(--bs-text);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(92, 92, 92, 0.5);
+  z-index: 1065;
+}

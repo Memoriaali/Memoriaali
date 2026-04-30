@@ -1,0 +1,127 @@
+{
+  "typescript.tsserver.watchOptions": {
+    "excludeDirectories": [
+      "legacy"
+    ]
+  },
+  "typescript.disableAutomaticTypeAcquisition": true,
+  // TypeScript and JavaScript Settings
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "typescript.preferences.maxInlayHintLength": 30,
+  "typescript.suggest.autoImports": false,
+  "javascript.preferences.maxInlayHintLength": 30,
+
+  // ESLint Configuration for Monorepo
+  "eslint.workingDirectories": [
+    "apps/backend",
+    "apps/frontend", 
+    "packages/api-types",
+    "packages/database",
+    "packages/shared"
+  ],
+  "eslint.codeActionsOnSave.mode": "all",
+
+  // Prettier Configuration
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "prettier.configPath": "./prettier.config.js",
+  "prettier.requireConfig": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+
+  // Language-specific settings
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode", 
+    "editor.formatOnSave": true
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode", 
+    "editor.formatOnSave": true
+  },
+
+  // Vitest Extension Configuration
+  "vitest.rootConfig": "./vitest.config.ts",
+  "vitest.nodeExecutable": "node",
+  "vitest.packageManager": "pnpm",
+  "vitest.enable": true,
+
+  // Testing View Configuration
+  "testing.showAllMessages": true,
+  "testing.automaticallyOpenPeekView": "failureInVisibleDocument",
+  "testing.defaultGutterClickAction": "run",
+
+  // Debug Configuration
+  "debug.allowBreakpointsEverywhere": true,
+  "debug.showInlineBreakpointCandidates": true,
+  "debug.showBreakpointsInOverviewRuler": true,
+
+  // File Explorer Settings
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.js, ${capture}.d.ts, ${capture}.js.map",
+    "*.tsx": "${capture}.js, ${capture}.d.ts, ${capture}.js.map",
+    "package.json": "package-lock.json, pnpm-lock.yaml, yarn.lock",
+    "vitest.config.*": "vitest.workspace.*",
+    "tsconfig.json": "tsconfig.*.json"
+  },
+
+  // Editor Settings for Better Debugging
+  "editor.rulers": [80, 120],
+  "editor.minimap.showSlider": "always",
+  "editor.glyphMargin": true,
+  "editor.lightbulb.enabled": "onCode",
+
+  // Terminal Settings
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "terminal.integrated.env.osx": {
+    "NODE_OPTIONS": "--max-old-space-size=4096"
+  },
+
+  // Docker Integration
+  "docker.defaultRegistryPath": "memoriaali",
+
+  // Git Settings
+  "git.enableSmartCommit": true,
+  "git.confirmSync": false,
+
+  // Workspace Trust Settings
+  "security.workspace.trust.untrustedFiles": "open",
+
+  // Search Settings
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/build": true,
+    "**/coverage": true,
+    "**/.next": true,
+    "**/generated": true,
+  },
+
+  // File Watching
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/.next/**": true
+  }
+} 

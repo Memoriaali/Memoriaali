@@ -1,0 +1,72 @@
+.iconStyle {
+  font-size: 22px;
+  opacity: 0.9;
+}
+
+.dragging {
+  opacity: 0.85;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
+.dragHandle {
+  cursor: grab;
+  transition: opacity 0.15s ease;
+}
+
+.dragHandle:hover {
+  opacity: 1;
+}
+
+.textareaResponsive {
+  width: 100%;
+  max-width: 500px;
+}
+
+.iconCell {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  white-space: normal;
+}
+
+.iconWrapper {
+  margin-left: auto;
+  flex: 0 0 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+}
+
+.textWrapper {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.grip {
+  font-size: 22px;
+  opacity: 0.9;
+}
+
+.isDragging td,
+.isDragging .textWrapper {
+  white-space: nowrap !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+  .textareaResponsive {
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 576px) {
+  .textareaResponsive {
+    max-width: 220px;
+  }
+}

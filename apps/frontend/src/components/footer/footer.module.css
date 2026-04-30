@@ -1,0 +1,23 @@
+.footer {
+  background-color: var(--bs-footer);
+  padding: 2rem 0;
+}
+
+.footerText {
+  color: var(--bs-light);
+}
+
+.footerLogos {
+  width: auto;
+  object-fit: contain;
+  height: 5rem !important;
+}
+
+.logoRow {
+  margin-top: 2rem !important;
+  margin-bottom: 4rem;
+}
+
+.link {
+  color: var(--bs-light);
+}

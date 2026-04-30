@@ -1,0 +1,18 @@
+.wrapper {
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.pagination {
+  --bs-pagination-bg: var(--bs-secondaryBg);
+  --bs-pagination-color: var(--bs-text);
+  --bs-pagination-active-bg: var(--bs-primary);
+  --bs-pagination-active-color: var(--bs-secondaryText);
+  --bs-pagination-disabled-bg: var(--bs-secondaryBg);
+  --bs-pagination-disabled-color: var(--bs-text);
+}

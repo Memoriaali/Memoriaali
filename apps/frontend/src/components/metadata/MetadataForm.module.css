@@ -1,0 +1,26 @@
+.headerText {
+  margin-bottom: 2vh;
+  font-size: 30px;
+}
+
+.formLabel {
+  font-weight: bold;
+  margin-top: 1.5vh;
+}
+
+.formControl {
+  margin-bottom: 0.5vh !important;
+}
+
+.groupSelect {
+  margin-bottom: 0.5rem;
+}
+
+.validationErrorText {
+  margin-bottom: 2vh !important;
+  color: red;
+}
+
+.aiTag {
+  margin-left: 0.5rem !important;
+}

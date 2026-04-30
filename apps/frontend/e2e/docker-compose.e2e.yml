@@ -1,0 +1,84 @@
+services:
+  # Dedicated MySQL database for Frontend E2E tests (shared with backend)
+  mysql-frontend-e2e:
+    image: mysql:8.0
+    container_name: memoriaali-frontend-e2e-db
+    environment:
+      MYSQL_ROOT_PASSWORD: frontend_e2e_root_password_123
+      MYSQL_DATABASE: memoriaali_frontend_e2e
+      MYSQL_USER: memoriaali_frontend_e2e_user
+      MYSQL_PASSWORD: frontend_e2e_user_password_123
+    ports:
+      - '33061:3306' # Non-conflicting port (backend E2E uses 33060)
+    volumes:
+      - mysql_frontend_e2e_data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      timeout: 20s
+      retries: 10
+      interval: 10s
+    networks:
+      - frontend-e2e-network
+
+  # Backend API container for Frontend E2E testing
+  backend-frontend-e2e:
+    build:
+      context: ../../backend/ # Build from apps/backend context
+      dockerfile: Dockerfile
+    container_name: memoriaali-frontend-e2e-backend
+    environment:
+      NODE_ENV: test
+      PORT: 4000
+      DATABASE_URL: mysql://memoriaali_frontend_e2e_user:frontend_e2e_user_password_123@mysql-frontend-e2e:3306/memoriaali_frontend_e2e
+      JWT_SECRET: frontend_e2e_jwt_secret_key_for_testing_only_min_32_chars
+      JWT_EXPIRES_IN: 24h
+      CORS_ORIGIN: http://frontend-e2e:3000
+    ports:
+      - '8001:4000' # Backend API for frontend to connect to
+    depends_on:
+      mysql-frontend-e2e:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:4000/api/v2/health']
+      timeout: 10s
+      retries: 5
+      interval: 10s
+    networks:
+      - frontend-e2e-network
+    volumes:
+      - ../../../packages/database/schema.prisma:/app/prisma/schema.prisma
+      - ../../../packages/database/migrations:/app/prisma/migrations
+
+  # Frontend Next.js application for E2E testing
+  frontend-e2e:
+    build:
+      context: ../ # Build from apps/frontend context
+      dockerfile: Dockerfile.e2e
+    container_name: memoriaali-frontend-e2e-app
+    environment:
+      NODE_ENV: e2e
+      PORT: 3000
+      NEXT_PUBLIC_API_URL: http://localhost:8001
+      # Next.js specific environment variables
+      NEXTAUTH_URL: http://localhost:8002
+      NEXTAUTH_SECRET: frontend_e2e_nextauth_secret_key_for_testing_only
+    ports:
+      - '8002:3000' # Frontend app (non-conflicting with dev port 3000)
+    depends_on:
+      backend-frontend-e2e:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/health']
+      timeout: 10s
+      retries: 5
+      interval: 10s
+    networks:
+      - frontend-e2e-network
+
+volumes:
+  mysql_frontend_e2e_data:
+    driver: local
+
+networks:
+  frontend-e2e-network:
+    driver: bridge

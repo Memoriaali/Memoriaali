@@ -1,0 +1,30 @@
+.collectionsLink {
+  margin-bottom: 1rem;
+}
+
+.collectionsLink:link {
+  text-decoration: none;
+}
+
+.collectionsLink:visited {
+  text-decoration: none;
+}
+
+.collectionsLink:hover {
+  text-decoration: none;
+}
+
+.collectionsLink:active {
+  text-decoration: none;
+}
+
+.listItem:hover {
+  box-shadow: 5px 3px 3px var(--bs-secondary);
+}
+
+.listItem {
+  padding: 1rem !important;
+  background-color: var(--bs-secondaryBg);
+  color: var(--bs-text);
+  border-color: var(--bs-secondaryBg);
+}

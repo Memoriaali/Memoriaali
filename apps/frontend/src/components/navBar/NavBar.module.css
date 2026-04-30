@@ -1,0 +1,81 @@
+.formControlUnderlined {
+  border: 0 !important;
+  border-bottom: 1.5px solid var(--bs-navbarSearch) !important;
+  border-radius: 0 !important;
+  background-color: var(--bs-navbar) !important;
+  color: var(--bs-text);
+}
+
+.formControlUnderlined::placeholder {
+  color: var(--bs-navbarSearch) !important;
+}
+
+.formControl:focus {
+  box-shadow: none !important;
+  color: var(--bs-text);
+}
+
+.topNavigation {
+  background-color: var(--bs-navbar) !important;
+  padding: 1rem 0;
+}
+
+.navbarDivider {
+  height: 1.5vh;
+}
+
+.brandContainer {
+  display: flex;
+  align-items: center;
+}
+
+.brandLogo {
+  height: 5vh;
+  width: auto;
+  margin-right: 10px;
+}
+
+.brandText {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--bs-primary) !important;
+}
+
+.brandLink {
+  text-decoration: none;
+}
+
+.languageSwitcher {
+  margin-right: 1rem;
+}
+
+.searchGroup {
+  width: 100%;
+  max-width: 640px;
+}
+
+.inputGroupLoose {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.inputGroupLoose > .form-control {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.inputGroupLoose > .btn,
+.inputGroupLoose > .btn:focus,
+.inputGroupLoose > .btn:active {
+  height: calc(1.5em + 0.75rem + 2px);
+  padding-inline: 0.9rem;
+  border-radius: 9999px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.desktopLink {
+  margin-right: 1rem;
+}

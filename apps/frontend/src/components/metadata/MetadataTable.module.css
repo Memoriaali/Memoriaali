@@ -1,0 +1,53 @@
+.metadataTableHeader {
+  vertical-align: text-top;
+}
+
+.metadataTable {
+  border-collapse: separate;
+  border-spacing: 0 0.5rem;
+}
+
+.tableBorderless > tbody > tr > td,
+.tableBorderless > tbody > tr > th,
+.tableBorderless > tfoot > tr > td,
+.tableBorderless > tfoot > tr > th,
+.tableBorderless > thead > tr > td,
+.tableBorderless > thead > tr > th {
+  border: none;
+  background-color: var(--bs-fileCardBg);
+  color: var(--bs-text);
+}
+
+.header {
+  color: var(--bs-text);
+}
+
+.valueWithSuggestionList {
+  display: grid;
+  gap: 0.35rem;
+}
+
+/*Suggestions*/
+
+.suggestionRows {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.suggestionRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--bs-text);
+  line-height: 1.2;
+}
+
+.suggestionIcon {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.suggestionText {
+  white-space: pre-wrap;
+  word-break: break-word;
+}

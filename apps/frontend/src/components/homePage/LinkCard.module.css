@@ -1,0 +1,22 @@
+.card {
+  margin-bottom: 2vh;
+  min-height: 24vh;
+  text-align: center;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  border: none;
+}
+
+.cardText {
+  font-size: 7vh;
+  color: var(--bs-text) !important;
+}
+
+.cardTitle {
+  color: var(--bs-text) !important;
+}
+
+.link {
+  text-decoration: none;
+}

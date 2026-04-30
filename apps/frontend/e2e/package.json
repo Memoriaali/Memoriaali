@@ -1,0 +1,43 @@
+{
+  "name": "@frontend/e2e",
+  "version": "1.0.0",
+  "description": "Frontend E2E testing package for Memoriaali Next.js application using Playwright",
+  "type": "module",
+  "scripts": {
+    "env:setup": "./scripts/setup-frontend-e2e-env.sh",
+    "env:teardown": "./scripts/teardown-frontend-e2e-env.sh",
+    "test:ui": "playwright test",
+    "test:ui:watch": "playwright test --watch",
+    "test:ui:headed": "playwright test --headed",
+    "test:ui:debug": "playwright test --debug",
+    "test:ui:codegen": "playwright codegen http://localhost:8002",
+    "test:coverage": "playwright test --reporter=html",
+    "test:ci": "npm run env:setup && npm run test:ui && npm run env:teardown",
+    "test:report": "playwright show-report",
+    "install:browsers": "playwright install --with-deps"
+  },
+  "keywords": [
+    "e2e",
+    "testing",
+    "playwright",
+    "frontend",
+    "nextjs",
+    "ui-testing",
+    "memoriaali"
+  ],
+  "author": "Memoriaali Development Team",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@memoriaali/api-types": "workspace:*",
+    "@memoriaali/database": "workspace:*"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.2",
+    "@types/node": "^20.17.10",
+    "typescript": "^5.9.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

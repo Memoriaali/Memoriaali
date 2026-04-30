@@ -1,0 +1,24 @@
+$theme-colors: (
+  'primary': #282929,
+  'primaryHover': #171717,
+  'secondary': #b0b0b0,
+  'dark': #000000,
+  'light': #ffffff,
+  'info': #554444,
+  'success': #36ec09,
+  'warning': #ffcc00,
+  'danger': #b30000,
+  'background': #ffffff,
+  'navbar': #ffffff,
+  'navbarSearch': #000000,
+  'text': #000000,
+  'secondaryText': #ffffff,
+  'footer': #272727,
+  'fileCardBg': #ffffff,
+  'modalBg': #ffffff,
+  'secondaryBg': #ffffff,
+);
+
+@use 'bootstrap/scss/bootstrap' with (
+  $theme-colors: $theme-colors
+);

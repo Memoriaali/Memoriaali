@@ -1,0 +1,866 @@
+// ================================================================================================
+// MEMORIAALI V2.0 DATABASE SCHEMA
+// ================================================================================================
+// 
+// Finnish Memory Institution Digital Archive Platform
+// Migration-Focused Schema with Simple Audit System
+//
+// PURPOSE: 
+// - Modernize legacy monolithic database with 64-column metadata
+// - Enable Finnish archival specification compliance
+// - Provide multi-tenant support for memory institutions
+// - Foundation for comprehensive audit system (future enhancement)
+//
+// KEY DESIGN PRINCIPLES:
+// - Simple audit fields for migration success (createdBy/updatedBy pattern)
+// - JSON metadata consolidation (solves 64-column additionalmetadata problem)
+// - Performance-optimized indexing for institutional queries
+// - Type-safe with Zod validation generation
+// - E-ARK archival package compliance
+//
+// MIGRATION STRATEGY:
+// - Extract-Transform-Load from legacy MariaDB
+// - 450+ legacy fields mapped to consolidated JSON metadata
+// - Zero data loss with backward compatibility
+// - Progressive enhancement approach
+//
+// ================================================================================================
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+generator zod {
+  provider         = "zod-prisma-types"
+  output           = "../api-types/src/generated"
+  imports          = "../schemas/database-schemas"
+  createInputTypes = false
+  createModelTypes = true
+}
+
+// Field encryption generator
+generator fieldEncryption {
+  provider = "prisma-field-encryption"
+  output   = "./generated"
+}
+
+// Custom sensitive fields generator
+generator sensitiveFields {
+  provider = "./generators/sensitive-fields-generator.js"
+  output   = "./generated/sensitive-fields"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ================================================================================================
+// CORE MODELS - Central entities for the archival system
+// ================================================================================================
+
+/// **USER MODEL**
+/// Central authentication and user management for Finnish memory institutions
+/// 
+/// **Purpose**: Manages users across multiple organizations with role-based access control
+/// **Legacy Migration**: Consolidates user data from legacy 'users' table with enhanced fields
+/// **Multi-tenant**: Organization field enables institutional separation
+/// 
+/// **Account Types**:
+/// - PRIVATE: Individual researchers, students, general public
+/// - COMPANY: Organizations requiring business contact information
+/// 
+/// **Role Hierarchy** (ADMIN > MODERATOR > EXPERT > USER):
+/// - ADMIN: Full system administration and configuration
+/// - MODERATOR: Content approval, user management, institutional oversight
+/// - EXPERT: Enhanced metadata editing, specialized archival functions
+/// - USER: Basic document upload, viewing, commenting
+/// 
+/// **Authentication**: Secure bcrypt password hashing with salt
+/// **Audit System**: Self-referential relationships track user creation/modification
+model User {
+  // ===== PRIMARY FIELDS =====
+  id               String      @id @default(uuid()) /// UUID primary key // zod.uuid()
+  username         String      @unique @db.VarChar(255) /// @sensitive - Unique username for login (max 255 chars) @zod.custom.use(UsernameSchema)
+  hashedPassword   String      @map("hashed_password") @db.Text /// @never-expose @gdpr.category(TECHNICAL) @gdpr.purpose(AUTHENTICATION) @gdpr.retention(INDEFINITE) - Bcrypt hashed password with salt
+  salt             String      @db.Text /// @never-expose @gdpr.category(TECHNICAL) @gdpr.purpose(AUTHENTICATION) @gdpr.retention(INDEFINITE) - Password salt for additional security
+  role             UserRole    @default(USER) /// Role-based permissions (see UserRole enum)
+  accountType      AccountType @default(PRIVATE) @map("account_type") /// Account type (PRIVATE/COMPANY)
+  isActivated      Boolean     @default(false) @map("is_activated") /// Email verification status
+  verificationCode String      @map("verification_code") @db.Text /// @never-expose @gdpr.category(TECHNICAL) @gdpr.purpose(AUTHENTICATION) @gdpr.retention(1_YEAR) - Email verification token
+  passwordResetToken String?   @map("password_reset_token") @db.Text /// @never-expose @gdpr.category(TECHNICAL) @gdpr.purpose(AUTHENTICATION) @gdpr.retention(1_YEAR) - Password reset token
+  passwordResetExpires DateTime? @map("password_reset_expires") /// Password reset token expiration time
+
+  // ===== CONTACT INFORMATION =====
+  // Required for all account types
+  email         String  @unique @db.VarChar(255) /// @sensitive @gdpr.category(PERSONAL) @gdpr.purpose(COMMUNICATION) @gdpr.retention(UNTIL_DELETION_REQUEST) - Unique email for login and notifications @zod.custom.use(EmailSchema)
+  firstName     String? @map("first_name") @db.Text /// @sensitive @gdpr.category(PERSONAL) @gdpr.purpose(ARCHIVAL) @gdpr.retention(UNTIL_DELETION_REQUEST) - User's first name (optional) @zod.custom.use(OptionalNameSchema)
+  lastName      String? @map("last_name") @db.Text /// @sensitive @gdpr.category(PERSONAL) @gdpr.purpose(ARCHIVAL) @gdpr.retention(UNTIL_DELETION_REQUEST) - User's last name (optional) @zod.custom.use(OptionalNameSchema)
+  streetAddress String? @map("street_address") @db.Text /// @sensitive - Mailing address street
+  postalCode    String? @map("postal_code") @db.Text /// @sensitive - Postal/ZIP code
+  postOffice    String? @map("post_office") @db.Text /// @sensitive - Post office/city name
+  telephone     String? @db.Text /// @sensitive - Contact phone number
+  profession    String? @db.Text /// @sensitive - User's profession/occupation
+
+  // ===== COMPANY INFORMATION =====
+  // Only used when accountType = COMPANY
+  companyName          String? @map("company_name") @db.Text /// @sensitive - Company/organization name @zod.custom.use(OptionalCompanyNameSchema)
+  companyEmail         String? @map("company_email") @db.Text /// @sensitive - Official company email @zod.custom.use(OptionalEmailSchema)
+  companyTelephone     String? @map("company_telephone") @db.Text /// @sensitive - Company phone number
+  companyContactPerson String? @map("company_contact_person") @db.Text /// @sensitive - Primary contact person @zod.custom.use(OptionalNameSchema)
+
+
+  // ===== SYSTEM FIELDS =====
+  // adminNotes field removed - not needed in current implementation
+  // ===== SIMPLE AUDIT FIELDS =====
+
+  // Provides basic accountability without complex audit system overhead
+  createdAt   DateTime @default(now()) @map("created_at") /// Record creation timestamp
+  updatedAt   DateTime @updatedAt @map("updated_at") /// Last modification timestamp
+  createdById String?  @map("created_by_id") /// User who created this record
+  updatedById String?  @map("updated_by_id") /// User who last modified this record
+
+  // ===== SELF-REFERENTIAL AUDIT RELATIONSHIPS =====
+  // Enables tracking who created/modified user accounts
+  createdBy    User?  @relation("UserCreatedBy", fields: [createdById], references: [id])
+  updatedBy    User?  @relation("UserUpdatedBy", fields: [updatedById], references: [id])
+  usersCreated User[] @relation("UserCreatedBy") /// Users created by this user
+  usersUpdated User[] @relation("UserUpdatedBy") /// Users modified by this user
+
+  // ===== ENTITY RELATIONSHIPS =====
+  // Direct ownership relationships
+  groups              UsersInGroups[] /// Group memberships with roles
+  documents           Document[] /// Documents uploaded by this user
+  comments            Comment[] /// Comments authored by this user
+  oralHistories       OralHistory[] /// Oral history interviews created
+  sips                Sip[] /// SIP packages created
+  metadataSuggestions MetadataSuggestion[] /// Metadata improvement suggestions
+  researchRequests    ResearchRequest[] /// Research access requests made
+  refreshTokens       RefreshToken[] /// JWT refresh tokens for this user
+  sipJobs             SipJob[] /// SIP archiving jobs created by this user
+
+  // ===== AUDIT TRAIL RELATIONSHIPS =====
+  // Tracks what this user has created/modified across all entities
+  documentsCreated        Document[]           @relation("DocumentCreatedBy") /// Documents created by this user
+  documentsUpdated        Document[]           @relation("DocumentUpdatedBy") /// Documents last modified by this user
+  collectionsCreated      Collection[]         @relation("CollectionCreatedBy") /// Collections created
+  collectionsUpdated      Collection[]         @relation("CollectionUpdatedBy") /// Collections modified
+  groupsCreated           Group[]              @relation("GroupCreatedBy") /// Groups created
+  groupsUpdated           Group[]              @relation("GroupUpdatedBy") /// Groups modified
+  commentsCreated         Comment[]            @relation("CommentCreatedBy") /// Comments created
+  commentsUpdated         Comment[]            @relation("CommentUpdatedBy") /// Comments modified
+  suggestionsCreated      MetadataSuggestion[] @relation("SuggestionCreatedBy") /// Suggestions created
+  suggestionsUpdated      MetadataSuggestion[] @relation("SuggestionUpdatedBy") /// Suggestions modified
+  requestsCreated         ResearchRequest[]    @relation("RequestCreatedBy") /// Research requests created
+  requestsUpdated         ResearchRequest[]    @relation("RequestUpdatedBy") /// Research requests modified
+  defaultQuestionsCreated DefaultQuestion[]    @relation("DefaultQuestionCreatedBy") /// Default questions created
+  defaultQuestionsUpdated DefaultQuestion[]    @relation("DefaultQuestionUpdatedBy") /// Default questions modified
+
+  // ===== PERFORMANCE INDEXES =====
+  @@index([email])
+  @@index([username]) /// Username lookups
+  @@index([createdById]) /// Audit queries - who created records
+  @@index([updatedById]) /// Audit queries - who modified records
+  @@map("users")
+}
+
+/// **DOCUMENT MODEL**
+/// Core digital asset storage with consolidated metadata system
+/// 
+/// **Purpose**: Stores documents with comprehensive metadata for Finnish archival compliance
+/// **Legacy Problem Solved**: Consolidates 64-column additionalmetadata nightmare into structured JSON
+/// **Metadata Standards**: Supports Dublin Core, EAD, and Finnish archival specifications
+/// 
+/// **Privacy Levels**:
+/// - PUBLIC: Openly accessible to all users
+/// - PRIVATE: Only accessible to document owner
+/// - GROUP: Shared with specific group members
+/// - RESEARCH_ONLY: Requires approved research request
+/// 
+/// **File Processing**: Supports OCR text extraction, EXIF metadata, and format detection
+/// **Archival Compliance**: E-ARK SIP package integration for long-term preservation
+/// **Search Optimization**: JSON path indexes for critical archival fields
+model Document {
+  // ===== PRIMARY FIELDS =====
+  id       String  @id @default(uuid()) /// UUID primary key
+  userId   String  @map("user_id") /// Document owner (foreign key to User)
+  fileName String  @map("file_name") @db.Text /// Current filename in storage
+  ocrText  String? @map("ocr_text") @db.Text /// @sensitive - Extracted text via OCR for full-text search
+  mimeType String? @map("mime_type") @db.Text /// File MIME type (image/jpeg, application/pdf, etc.)
+
+  // ===== PRIVACY AND SHARING CONTROLS =====
+  documentPrivacy DocPrivacy @default(PUBLIC) @map("document_privacy") /// Access control level
+  shareToGroup    Boolean?   @map("share_to_group") /// Enable group sharing
+  groupToShare    String?    @map("group_to_share") /// Specific group ID for sharing
+
+  // ===== CONSOLIDATED METADATA (JSON) =====
+  /// **CRITICAL**: This JSON field solves the legacy 64-column metadata model
+  /// Contains ALL metadata from legacy system plus Finnish archival specification fields
+  /// 
+  /// **Structure**:
+  /// - archival: Official Finnish specification fields (header, subjectIndexing, personNames, etc.)
+  /// - dublinCore: Standard Dublin Core metadata (title, creator, subject, etc.)
+  /// - ead: Encoded Archival Description fields (unitTitle, repository, etc.)
+  /// - visibility: Field-level visibility controls (preserved from legacy)
+  /// - linkedData: Semantic web URIs for entities (creator_iri, publisher_iri, etc.)
+  /// - additional: Legacy md1-md64 fields from additionalmetadata table
+  /// - exif: Camera/scanner metadata extracted from files
+  /// - combined: Preserved from legacy metadatacombined field
+  /// 
+  /// **Performance**: Indexed JSON paths for frequent archival queries
+  /// **Migration**: Complete mapping from 450+ legacy fields with zero data loss
+  metadata Json @default("{}") @db.Json /// @zod.custom.use(DocumentMetadataSchema) - TEMPORARILY DISABLED
+  iris     Json @default("{}") @db.Json /// @zod.custom.use(IrisSchema) - TEMPORARILY DISABLED
+
+  // ===== ERROR DETECTION (Finnish Specification Requirements) =====
+  hasErrors        Boolean @default(false) @map("has_errors") /// Quick flag for error filtering  
+  errorTypes       Json    @default("[]") @map("error_types") @db.Json /// @zod.custom.use(ErrorTypesArraySchema) - TEMPORARILY DISABLED
+  errorPageNumbers Json    @default("[]") @map("error_page_numbers") @db.Json /// @zod.custom.use(ErrorPageNumbersArraySchema) - TEMPORARILY DISABLED
+
+  // ===== AI MODIFICATION TRACKING =====
+  // Transparency and compliance for AI-assisted metadata enhancement
+  aiModified       Boolean @default(false) @map("ai_modified") /// Flag if AI modified any fields
+  aiModifiedFields Json    @default("[]") @map("ai_modified_fields") @db.Json /// @zod.custom.use(AiModifiedFieldsArraySchema) - TEMPORARILY DISABLED
+
+  // ===== PLUGIN SYSTEM STATUS =====
+  // Tracks which processing plugins were enabled for reproducibility
+  pluginsEnabled Json @default("{}") @map("plugins_enabled") @db.Json /// @zod.custom.use(PluginsEnabledSchema) - TEMPORARILY DISABLED
+
+  // ===== SIMPLE AUDIT FIELDS =====
+  createdAt   DateTime @default(now()) @map("created_at") /// Document upload timestamp
+  updatedAt   DateTime @updatedAt @map("updated_at") /// Last metadata/file modification
+  createdById String   @map("created_by_id") /// User who uploaded document
+  updatedById String   @map("updated_by_id") /// User who last modified document
+
+  // ===== RELATIONSHIPS =====
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdBy User @relation("DocumentCreatedBy", fields: [createdById], references: [id])
+  updatedBy User @relation("DocumentUpdatedBy", fields: [updatedById], references: [id])
+
+  // ===== DEPENDENT ENTITIES =====
+  docInCollections    DocumentsInCollections[] /// Collection memberships
+  comments            Comment[] /// User comments and annotations
+  metadataSuggestions MetadataSuggestion[] /// Crowdsourced metadata improvements
+  researchRequests    ResearchRequest[] /// Access requests for restricted documents
+  sipDocuments        SipDocument[]            @relation("DocumentToSipDocuments") /// Associations with SIP packages
+
+  // ===== PERFORMANCE INDEXES =====
+  @@index([userId])
+  @@index([documentPrivacy]) /// Privacy-filtered queries
+  @@index([createdAt]) /// Chronological sorting
+  @@index([createdById]) /// Audit trail queries
+  @@index([updatedById]) /// Modification tracking
+  // ===== JSON METADATA INDEXES =====
+  // Note: MySQL JSON path indexes require generated columns - will be implemented via migration scripts
+  @@map("documents")
+}
+
+/// **COLLECTION MODEL**
+/// Document organization and curation for institutional display
+/// 
+/// **Purpose**: Groups related documents for browsing, exhibitions, and institutional organization
+/// **Use Cases**: Thematic collections, temporary exhibitions, research projects, institutional showcases
+/// **Curation**: Enables librarians and archivists to create meaningful document groupings
+model Collection {
+  id                    String @id @default(uuid()) /// UUID primary key
+  collectionName        String @map("collection_name") @db.Text /// Display name for collection
+  collectionDescription String @map("collection_description") @db.Text /// Detailed description/purpose
+
+  // ===== SIMPLE AUDIT FIELDS =====
+  createdAt   DateTime @default(now()) @map("created_at") /// Collection creation timestamp
+  updatedAt   DateTime @updatedAt @map("updated_at") /// Last modification (name, description, contents)
+  createdById String   @map("created_by_id") /// User who created collection
+  updatedById String   @map("updated_by_id") /// User who last modified collection
+
+  // ===== RELATIONSHIPS =====
+  createdBy              User                     @relation("CollectionCreatedBy", fields: [createdById], references: [id])
+  updatedBy              User                     @relation("CollectionUpdatedBy", fields: [updatedById], references: [id])
+  documentsInCollections DocumentsInCollections[] /// Many-to-many with documents
+
+  // ===== PERFORMANCE INDEXES =====
+  @@index([collectionName(length: 100)])
+  @@index([createdById]) /// Audit trail queries
+  @@index([updatedById]) /// Modification tracking
+  @@map("collections")
+}
+
+/// **GROUP MODEL**
+/// User organization and permission management for institutions
+/// 
+/// **Purpose**: Organizes users by institution, department, or access level
+/// **Permissions**: Groups can have different access levels to documents and collections
+model Group {
+  id        String @id @default(uuid()) /// UUID primary key
+  groupName String @map("group_name") @db.Text /// Display name for group
+
+  // ===== SIMPLE AUDIT FIELDS =====
+  createdAt   DateTime @default(now()) @map("created_at") /// Group creation timestamp
+  updatedAt   DateTime @updatedAt @map("updated_at") /// Last modification
+  createdById String   @map("created_by_id") /// User who created group
+  updatedById String   @map("updated_by_id") /// User who last modified group
+
+  // ===== RELATIONSHIPS =====
+  createdBy User            @relation("GroupCreatedBy", fields: [createdById], references: [id])
+  updatedBy User            @relation("GroupUpdatedBy", fields: [updatedById], references: [id])
+  users     UsersInGroups[] /// Many-to-many with users (includes roles)
+
+  // ===== PERFORMANCE INDEXES =====
+  @@index([groupName(length: 100)])
+  @@index([createdById]) /// Audit trail queries
+  @@index([updatedById]) /// Modification tracking
+  @@map("groups")
+}
+
+// ================================================================================================
+// RELATIONSHIP MODELS - Many-to-many relationships with additional metadata
+// ================================================================================================
+
+/// **DOCUMENTS IN COLLECTIONS**
+/// Many-to-many relationship between documents and collections
+/// 
+/// **Purpose**: Enables documents to belong to multiple collections while maintaining audit trails
+/// **Use Case**: A historical photo might belong to both "WWII Collection" and "Local History"
+/// **Audit**: Tracks when documents were added/removed from collections and by whom
+model DocumentsInCollections {
+  id           String @id @default(uuid()) /// UUID primary key
+  documentId   String @map("document_id") /// Foreign key to Document
+  collectionId String @map("collection_id") /// Foreign key to Collection
+
+  // ===== SIMPLE AUDIT FIELDS =====
+  // Tracks when documents are added/removed from collections
+  createdAt   DateTime @default(now()) @map("created_at") /// When document added to collection
+  updatedAt   DateTime @updatedAt @map("updated_at") /// Last modification
+  createdById String   @map("created_by_id") /// User who added document to collection
+  updatedById String   @map("updated_by_id") /// User who last modified this relationship
+
+  // ===== RELATIONSHIPS =====
+  document   Document   @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  collection Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+
+  @@unique([documentId, collectionId]) /// Prevent duplicate document-collection pairs
+  // ===== PERFORMANCE INDEXES =====
+  @@index([documentId])
+  @@index([collectionId])
+  @@index([createdById]) /// Audit trail queries
+  @@index([updatedById]) /// Modification tracking
+  @@map("documents_in_collections")
+}
+
+/// **USERS IN GROUPS**
+/// Many-to-many relationship between users and groups with role metadata
+/// 
+/// **Purpose**: Manages group memberships with flexible role system
+/// **Legacy Compatibility**: Preserves legacy bit field role structure in JSON metadata
+/// **Role System**: JSON metadata allows complex role definitions per group membership
+/// **Future Enhancement**: Can be extended with detailed permission matrices
+model UsersInGroups {
+  id      String @id @default(uuid()) /// UUID primary key
+  groupId String @map("group_id") /// Foreign key to Group
+  userId  String @map("user_id") /// Foreign key to User
+
+  // ===== ROLE SYSTEM =====
+  /// **IMPORTANT**: Preserves legacy bit field role structure in JSON format
+  /// **Structure**: { "roles": [...], "permissions": {...}, "legacy_bits": 123 }
+  /// **Flexibility**: Allows complex per-group role definitions
+  /// **Migration**: Maintains backward compatibility with legacy role system
+  metadata Json @default("{}") @db.Json /// @zod.custom.use(UserGroupMetadataSchema) - TEMPORARILY DISABLED
+
+  // ===== SIMPLE AUDIT FIELDS =====
+  createdAt   DateTime @default(now()) @map("created_at") /// When user joined group
+  updatedAt   DateTime @updatedAt @map("updated_at") /// Last role/permission change
+  createdById String   @map("created_by_id") /// User who added member to group
+  updatedById String   @map("updated_by_id") /// User who last modified membership
+
+  // ===== RELATIONSHIPS =====
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId]) /// Prevent duplicate user-group pairs
+  // ===== PERFORMANCE INDEXES =====
+  @@index([groupId])
+  @@index([userId])
+  @@index([createdById]) /// Audit trail queries
+  @@index([updatedById]) /// Modification tracking
+  @@map("users_in_groups")
+}
+
+// ================================================================================================
+// FEATURE MODELS - Specialized functionality for archival workflows
+// ================================================================================================
+
+/// **COMMENT MODEL**
+/// Document annotation and review system with moderation workflow
+/// 
+/// **Purpose**: Enables user comments on documents with approval workflow
+/// **Moderation**: Comments require approval before public display
+/// **Use Cases**: Research notes, transcription corrections, historical context, quality feedback
+/// **Workflow**: PENDING → APPROVED/REJECTED by moderators
+model Comment {
+  id         String       @id @default(uuid()) /// UUID primary key
+  documentId String       @map("document_id") /// Target document for comment
+  userId     String       @map("user_id") /// Comment author
+  comment    String       @db.Text /// @sensitive - Comment content (full text)
+  state      CommentState @default(PENDING) /// Moderation status
+
+  // ===== SIMPLE AUDIT FIELDS =====
+  createdAt   DateTime @default(now()) @map("created_at") /// Comment submission time
+  updatedAt   DateTime @updatedAt @map("updated_at") /// Last edit or status change
+  createdById String   @map("created_by_id") /// Original comment author
+  updatedById String   @map("updated_by_id") /// User who last modified/approved
+
+  // ===== RELATIONSHIPS =====
+  document  Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdBy User     @relation("CommentCreatedBy", fields: [createdById], references: [id])
+  updatedBy User     @relation("CommentUpdatedBy", fields: [updatedById], references: [id])
+
+  // ===== PERFORMANCE INDEXES =====
+  @@index([documentId])
+  @@index([userId])
+  @@index([state]) /// Filter by moderation status
+  @@index([createdById]) /// Audit trail queries
+  @@index([updatedById]) /// Modification tracking
+  @@map("comments")
+}
+
+/// **ORAL HISTORY MODEL**
+/// Specialized model for oral history interview management
+/// 
+/// **Purpose**: Manages audio/video interviews with specialized metadata
+/// **Features**: Interview participants, structured questions, keyword tagging
+/// **Sharing**: Group-based sharing controls for sensitive content
+/// **JSON Fields**: Questions and keywords stored as flexible arrays
+/// **Cultural Heritage**: Preserves intangible cultural heritage through recorded interviews
+model OralHistory {
+  id           String   @id @default(uuid()) /// UUID primary key
+  userId       String   @map("user_id") /// Interview creator/uploader
+  fileName     String   @map("file_name") @db.Text /// Audio/video filename
+  person       String   @db.Text /// @sensitive - Interviewee name/identifier
+  reporter     String   @db.Text /// @sensitive - Interviewer name/identifier
+  event        String   @db.Text /// Historical event/topic discussed
+  description  String   @db.Text /// @sensitive - Interview summary/description
+  language     String   @db.Text /// Primary language of interview
+  groupToShare String?  @map("group_to_share") /// Specific group for sharing
+  shareToGroup Boolean? @map("share_to_group") /// Enable group sharing
+
+  // ===== JSON FIELDS =====
+  /// **Questions**: Array of interview questions asked
+  /// **Structure**: [{"text": "Question text", "timestamp": "00:15:30", "order": 1}, ...]
+  questions Json @default("[]") @db.Json /// @zod.custom.use(QuestionsArraySchema) - TEMPORARILY DISABLED
+
+  /// **Keywords**: Array of thematic keywords/tags
+  /// **Structure**: ["World War II", "evacuation", "Karelia", "childhood memories"]
+  keywords Json @default("[]") @db.Json /// @zod.custom.use(KeywordsArraySchema) - TEMPORARILY DISABLED
+
+  // ===== SIMPLE AUDIT FIELDS =====
+  createdAt   DateTime @default(now()) @map("created_at") /// Interview upload time
+  updatedAt   DateTime @updatedAt @map("updated_at") /// Last metadata update
+  createdById String   @map("created_by_id") /// User who uploaded interview
+  updatedById String   @map("updated_by_id") /// User who last modified metadata
+
+  // ===== RELATIONSHIPS =====
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // ===== PERFORMANCE INDEXES =====
+  @@index([userId])
+  @@index([createdById]) /// Audit trail queries
+  @@index([updatedById]) /// Modification tracking
+  @@map("oral_histories")
+}
+
+/// **SIP MODEL**
+/// E-ARK compliant Submission Information Package management
+/// 
+/// **Purpose**: Manages archival packages according to E-ARK specifications for long-term preservation
+/// **Standards**: Complies with European archival repository standards
+/// **Workflow**: Groups documents into preservation-ready packages
+/// **Comments**: Enables review and approval workflow for SIP packages
+/// **Digital Preservation**: Foundation for long-term digital archive sustainability
+model Sip {
+  id        String @id @default(uuid()) /// UUID primary key
+  fileName  String @map("file_name") @db.Text /// SIP package filename
+  creatorId String @map("creator_id") /// User who created the SIP package
+
+  // ===== SIMPLE AUDIT FIELDS =====
+  createdAt   DateTime @default(now()) @map("created_at") /// SIP creation timestamp
+  updatedAt   DateTime @updatedAt @map("updated_at") /// Last SIP modification
+  createdById String   @map("created_by_id") /// User who created SIP
+  updatedById String   @map("updated_by_id") /// User who last modified SIP
+
+  // ===== RELATIONSHIPS =====
+  creator      User          @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  sipDocuments SipDocument[] @relation("SipToSipDocuments")
+
+  // ===== PERFORMANCE INDEXES =====
+  @@index([creatorId])
+  @@index([createdById]) /// Audit trail queries
+  @@index([updatedById]) /// Modification tracking
+  @@map("sips")
+}
+
+model SipDocument {
+  sipId      String @map("sip_id") /// Foreign key to Sip
+  documentId String @map("document_id") /// Foreign key to Document
+
+  // ===== SIMPLE AUDIT FIELDS =====
+  createdAt   DateTime @default(now()) @map("created_at") /// SIP document creation timestamp
+  updatedAt   DateTime @updatedAt @map("updated_at") /// Last SIP document modification
+  createdById String   @map("created_by_id") /// User who added document to SIP
+  updatedById String   @map("updated_by_id") /// User who last modified SIP document
+
+  // ===== RELATIONSHIPS =====
+  sip      Sip      @relation("SipToSipDocuments", fields: [sipId], references: [id], onDelete: Cascade)
+  document Document @relation("DocumentToSipDocuments", fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@id([sipId, documentId])
+  // ===== PERFORMANCE INDEXES =====
+  @@index([sipId])
+  @@index([documentId])
+  @@map("sip_documents")
+}
+
+/// **METADATA SUGGESTION MODEL**
+/// Crowdsourced metadata improvement system
+/// 
+/// **Purpose**: Enables users to suggest metadata improvements with approval workflow
+/// **Quality**: Improves metadata quality through community contributions
+/// **Workflow**: PENDING → APPROVED/REJECTED by experts or moderators
+/// **Transparency**: Tracks who suggested changes and why
+/// **Knowledge Sharing**: Leverages community expertise for better descriptions
+model MetadataSuggestion {
+  id                   String          @id @default(uuid()) /// UUID primary key
+  documentId           String          @map("document_id") /// Target document for suggestion
+  suggestedById        String          @map("suggested_by_id") /// User who made suggestion
+  approvedById         String?         @map("approved_by_id") /// User who approved/rejected suggestion
+  state                SuggestionState @default(PENDING) /// Approval workflow status
+  fieldToChange        String          @map("field_to_change") @db.Text /// JSON path or field name to modify
+  changedValue         String          @map("changed_value") @db.Text /// @sensitive - Proposed new value
+  rejectionExplanation String?         @db.Text /// @sensitive - Explanation for rejection
+
+  // ===== SIMPLE AUDIT FIELDS =====
+  createdAt   DateTime @default(now()) @map("created_at") /// Suggestion submission time
+  updatedAt   DateTime @updatedAt @map("updated_at") /// Last status change
+  createdById String   @map("created_by_id") /// Original suggester
+  updatedById String   @map("updated_by_id") /// User who approved/rejected
+
+  // ===== RELATIONSHIPS =====
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  suggestedBy User     @relation(fields: [suggestedById], references: [id], onDelete: Cascade)
+  createdBy   User     @relation("SuggestionCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("SuggestionUpdatedBy", fields: [updatedById], references: [id])
+
+  // ===== PERFORMANCE INDEXES =====
+  @@index([documentId])
+  @@index([suggestedById])
+  @@index([state]) /// Filter by workflow status
+  @@index([createdById]) /// Audit trail queries
+  @@index([updatedById]) /// Modification tracking
+  @@map("metadata_suggestions")
+}
+
+/// **RESEARCH REQUEST MODEL**
+/// Access control system for restricted documents
+/// 
+/// **Purpose**: Manages access requests for documents with RESEARCH_ONLY privacy level
+/// **Compliance**: Meets institutional requirements for controlled access to sensitive materials
+/// **Workflow**: PENDING → APPROVED/REJECTED by authorized personnel
+/// **Documentation**: Tracks research purpose for access audit trails
+/// **Privacy Protection**: Ensures appropriate use of restricted archival materials
+model ResearchRequest {
+  id                   String       @id @default(uuid()) /// UUID primary key
+  documentId           String       @map("document_id") /// Target restricted document
+  requestedById        String       @map("requested_by_id") /// User requesting access
+  state                RequestState @default(PENDING) /// Approval workflow status
+  purpose              String       @db.Text /// @sensitive - Research purpose/justification
+  approvedById         String?      @map("approved_by_id") /// User who approved/rejected
+  rejectionExplanation String?      @db.Text /// @sensitive - Explanation for rejection, when state is REJECTED
+  researchStartDate    DateTime?    @map("research_start_date") /// Date and time of research start
+  researchEndDate      DateTime?    @map("research_end_date") /// Date and time of research end
+
+  // ===== SIMPLE AUDIT FIELDS =====
+  createdAt   DateTime @default(now()) @map("created_at") /// Request submission time
+  updatedAt   DateTime @updatedAt @map("updated_at") /// Last status change
+  createdById String   @map("created_by_id") /// Original requester
+  updatedById String   @map("updated_by_id") /// User who approved/rejected
+
+  // ===== RELATIONSHIPS =====
+  document    Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  requestedBy User     @relation(fields: [requestedById], references: [id], onDelete: Cascade)
+  createdBy   User     @relation("RequestCreatedBy", fields: [createdById], references: [id])
+  updatedBy   User     @relation("RequestUpdatedBy", fields: [updatedById], references: [id])
+
+  // ===== PERFORMANCE INDEXES =====
+  @@index([documentId, requestedById, createdAt])
+  @@index([documentId])
+  @@index([requestedById])
+  @@index([state]) /// Filter by approval status
+  @@index([createdById]) /// Audit trail queries
+  @@index([updatedById]) /// Modification tracking
+  @@map("research_requests")
+}
+
+/// **SIP JOB MODEL**
+/// Background job queue for SIP archiving (durable, worker-driven)
+///
+/// Purpose: Tracks SIP job lifecycle and payload for external archiver
+/// Ownership: Each job belongs to the user who created it
+/// Processing: Claimed by worker (lockedBy/lockedAt), progress updated via callbacks
+model SipJob {
+  id         String @id @default(uuid()) /// UUID primary key
+  externalId String @unique @map("external_id") /// Public job id (e.g., sip-<uuid>)
+  userId     String @map("user_id") /// Job owner (foreign key to User)
+
+  // ===== JOB STATE =====
+  status   SipJobStatus @default(PENDING) /// Current job status
+  stage    SipJobStage  @default(QUEUED) /// Processing stage
+  progress Int          @default(0) /// 0-100 progress percentage
+
+  // ===== JOB PAYLOAD =====
+  documentIds Json    @default("[]") @map("document_ids") @db.Json /// Array of document UUIDs
+  archiveId   String? @map("archive_id") /// Optional archive identifier
+  metadata    Json    @default("{}") @db.Json /// Additional metadata
+
+  // ===== JOB RESULT / ERROR =====
+  result Json? @db.Json /// { sipPath, sipId, size, documentCount }
+  error  Json? @db.Json /// { code, message, details }
+
+  // ===== WORKER CLAIM / TIMESTAMPS =====
+  createdAt   DateTime  @default(now()) @map("created_at") /// Enqueue time
+  startedAt   DateTime? @map("started_at") /// Processing start
+  completedAt DateTime? @map("completed_at") /// Terminal state time
+
+  // ===== RELATIONSHIPS =====
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // ===== INDEXES =====
+  @@index([status, createdAt])
+  @@map("sip_jobs")
+}
+
+// ===== ENUMS for SIP JOBS =====
+enum SipJobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum SipJobStage {
+  QUEUED
+  VALIDATING
+  PREPARING
+  GENERATING
+  PACKAGING
+  FINALIZING
+  COMPLETE
+  ERROR
+}
+
+/// **DEFAULT QUESTION MODEL**
+/// Template questions for oral history interviews
+/// 
+/// **Purpose**: Provides standardized question templates for consistent oral history collection
+/// **Quality**: Ensures comprehensive coverage of important topics
+/// **Ordering**: Sort index enables logical question flow
+/// **Customization**: Templates can be customized per interview while maintaining standards
+model DefaultQuestion {
+  id        String @id @default(uuid()) /// UUID primary key
+  text      String @db.Text /// Question text content
+  sortIndex Int    @map("sort_index") /// Display order (1, 2, 3...)
+
+  // ===== SIMPLE AUDIT FIELDS =====
+  createdAt   DateTime @default(now()) @map("created_at") /// Question creation time
+  updatedAt   DateTime @updatedAt @map("updated_at") /// Last question edit
+  createdById String   @map("created_by_id") /// User who created question
+  updatedById String   @map("updated_by_id") /// User who last edited question
+
+  // ===== RELATIONSHIPS =====
+  createdBy User @relation("DefaultQuestionCreatedBy", fields: [createdById], references: [id])
+  updatedBy User @relation("DefaultQuestionUpdatedBy", fields: [updatedById], references: [id])
+
+  // ===== PERFORMANCE INDEXES =====
+  @@index([sortIndex]) /// Ordered retrieval of questions
+  @@index([createdById]) /// Audit trail queries
+  @@index([updatedById]) /// Modification tracking
+  @@map("default_questions")
+}
+
+/// **IRI MODEL**
+/// Linked data integration for semantic web compatibility
+/// 
+/// **Purpose**: Associates documents with standardized entity URIs for linked open data
+/// **Standards**: Supports semantic web standards and interoperability
+/// **Entity Types**: Persons, places, events, concepts, organizations
+/// **Data Quality**: Enables rich, structured metadata with global identifiers
+/// **Interoperability**: Links to external authority files and knowledge bases
+// model Iri {
+//   id         String  @id @default(uuid()) /// UUID primary key
+//   iriType    IriType @map("iri_type") /// Type of entity (PERSON, PLACE, etc.)
+//   iri        String  @db.Text /// Full URI (http://www.wikidata.org/entity/Q123)
+//   label      String  @db.Text /// Human-readable label for the entity
+//   documentId String  @map("document_id") /// Associated document
+
+//   // ===== SIMPLE AUDIT FIELDS =====
+//   createdAt   DateTime @default(now()) @map("created_at") /// IRI association time
+//   updatedAt   DateTime @updatedAt @map("updated_at") /// Last IRI update
+//   createdById String   @map("created_by_id") /// User who created IRI link
+//   updatedById String   @map("updated_by_id") /// User who last updated IRI
+
+//   // ===== RELATIONSHIPS =====
+//   document Document @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+//   // ===== PERFORMANCE INDEXES =====
+//   @@index([documentId])
+//   @@index([iriType]) /// Filter by entity type
+//   @@index([createdById]) /// Audit trail queries
+//   @@index([updatedById]) /// Modification tracking
+//   @@map("iris")
+// }
+
+/// **REFRESH TOKEN MODEL**
+/// JWT refresh token management for secure session handling
+/// 
+/// **Purpose**: Manages refresh tokens for secure, stateless authentication
+/// **Security**: Enables token rotation and session invalidation
+/// **Simplicity**: Minimal audit fields as tokens are ephemeral security tokens
+/// **Performance**: Token validation and cleanup of expired tokens
+model RefreshToken {
+  id     String @id @default(uuid()) /// UUID primary key
+  userId String @map("user_id") /// Token owner
+  token  String @db.Text /// @never-expose @gdpr.category(TECHNICAL) @gdpr.purpose(AUTHENTICATION) @gdpr.retention(1_YEAR) - Hashed refresh token
+
+  // ===== SIMPLE AUDIT FIELDS =====
+  // Note: Tokens don't need full audit trails as they're ephemeral security tokens
+  createdAt DateTime @default(now()) @map("created_at") /// Token generation time
+  updatedAt DateTime @updatedAt @map("updated_at") /// Last token use/refresh
+
+  // ===== RELATIONSHIPS =====
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // ===== PERFORMANCE INDEXES =====
+  @@index([userId])
+  @@index([token(length: 100)])
+  @@map("refresh_tokens")
+}
+
+// ================================================================================================
+// ENUMS - Type-safe constants for workflow states and classifications
+// ================================================================================================
+
+/// **USER ROLE ENUM**
+/// Hierarchical permission system for the archival platform
+/// 
+/// **Hierarchy**: ADMIN > MODERATOR > EXPERT > USER
+/// - ADMIN: Full system administration, configuration, user management
+/// - MODERATOR: Content moderation, approval workflows, institutional oversight
+/// - EXPERT: Enhanced metadata editing, specialized archival functions, quality control
+/// - USER: Basic document upload, viewing, commenting, research requests
+enum UserRole {
+  ADMIN /// System administrators with full access
+  MODERATOR /// Content moderators and institutional managers
+  USER /// Basic users with upload and viewing permissions
+  EXPERT /// Power users with enhanced metadata editing capabilities
+}
+
+/// **ACCOUNT TYPE ENUM**
+/// Determines available user profile fields and institutional classification
+/// 
+/// - PRIVATE: Individual users (researchers, students, general public)
+/// - COMPANY: Organizational users requiring business contact information
+enum AccountType {
+  PRIVATE /// Individual user account
+  COMPANY /// Organizational account with business fields
+}
+
+/// **DOCUMENT PRIVACY ENUM**
+/// Access control levels for documents in the archival system
+/// 
+/// **Access Levels**:
+/// - PUBLIC: Openly accessible to all authenticated users
+/// - PRIVATE: Only accessible to document owner
+/// - GROUP: Shared with specific group members only
+/// - RESEARCH_ONLY: Requires approved research request for access
+enum DocPrivacy {
+  PUBLIC /// Publicly accessible to all users
+  PRIVATE /// Only accessible to document owner
+  GROUP /// Shared with specific group members
+  RESEARCH_ONLY /// Requires research request approval
+}
+
+/// **COMMENT STATE ENUM**
+/// Moderation workflow states for user comments
+/// 
+/// **Workflow**: PENDING → APPROVED/REJECTED
+/// - PENDING: Awaiting moderator review
+/// - APPROVED: Approved for public display
+/// - REJECTED: Rejected and hidden from public view
+enum CommentState {
+  PENDING /// Awaiting moderation review
+  APPROVED /// Approved for public display
+  REJECTED /// Rejected and hidden
+}
+
+/// **SUGGESTION STATE ENUM**
+/// Approval workflow for metadata improvement suggestions
+/// 
+/// **Workflow**: PENDING → APPROVED/REJECTED
+/// - PENDING: Awaiting expert or moderator review
+/// - APPROVED: Accepted and applied to document metadata
+/// - REJECTED: Declined with optional explanation
+enum SuggestionState {
+  PENDING /// Awaiting expert review
+  APPROVED /// Accepted and applied
+  VERIFIED /// Verified by expert
+  REJECTED /// Declined
+}
+
+/// **REQUEST STATE ENUM**
+/// Approval workflow for research access requests
+/// 
+/// **Workflow**: PENDING → APPROVED/REJECTED
+/// - PENDING: Awaiting institutional approval
+/// - APPROVED: Access granted to restricted document
+/// - REJECTED: Access denied with optional explanation
+enum RequestState {
+  PENDING /// Awaiting institutional approval
+  APPROVED /// Access granted
+  REJECTED /// Access denied
+}
+
+/// **IRI TYPE ENUM**
+/// Categories of linked data entities for semantic web integration
+/// 
+/// **Entity Types**:
+/// - PERSON: Individual people (authors, subjects, interviewees)
+/// - PLACE: Geographic locations (cities, buildings, regions)
+/// - EVENT: Historical events (wars, celebrations, milestones)
+/// - CONCEPT: Abstract concepts (themes, topics, subjects)
+/// - ORGANIZATION: Institutions, companies, groups
+enum IriType {
+  PERSON /// Individual people and persons
+  PLACE /// Geographic locations and places
+  EVENT /// Historical events and occurrences
+  CONCEPT /// Abstract concepts and themes
+  ORGANIZATION /// Institutions and organizations
+}
+
+/// **DOCUMENT ERROR TYPE ENUM**
+/// Quality issues detected in scanned documents (Finnish archival compliance)
+/// 
+/// **Error Categories**:
+/// - POST_IT: Post-it notes detected in scan (should be removed)
+/// - FOLDED_CORNER: Page corner folded during scanning
+/// - EMPTY_PAGE: Blank or nearly blank page detected
+/// - BLURRED_TEXT: Text quality issues affecting OCR accuracy
+/// - POOR_QUALITY: General image quality problems
+/// - DAMAGED_ORIGINAL: Physical damage to original document visible in scan
+enum DocumentErrorType {
+  POST_IT /// Post-it notes detected on document
+  FOLDED_CORNER /// Page corner folded during scanning
+  EMPTY_PAGE /// Blank or nearly empty page
+  BLURRED_TEXT /// Text quality affects OCR
+  POOR_QUALITY /// General image quality issues
+  DAMAGED_ORIGINAL /// Physical damage to original document
+}

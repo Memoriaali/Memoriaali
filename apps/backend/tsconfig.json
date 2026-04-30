@@ -1,0 +1,37 @@
+{
+  "extends": "../../tools/tsconfig/node.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "moduleResolution": "node",
+    "allowImportingTsExtensions": false,
+    "noEmit": false,
+    "paths": {
+      "@memoriaali/database": ["../../packages/database/dist"],
+      "@memoriaali/database/secure-client": ["../../packages/database/dist/secure-client"],
+      "@memoriaali/database/*": ["../../packages/database/dist/*"],
+      "@memoriaali/database/generated/client": ["../../packages/database/generated/client"],
+      "@memoriaali/api-types": ["../../packages/api-types/dist"],
+      "@memoriaali/api-types/*": ["../../packages/api-types/dist/*"],
+      "@memoriaali/access-control": ["../../packages/access-control/dist"],
+      "@memoriaali/access-control/*": ["../../packages/access-control/dist/*"],
+      "@memoriaali/shared": ["../../packages/shared/dist"],
+      "@memoriaali/shared/*": ["../../packages/shared/dist/*"],
+      "@memoriaali/variant-config": ["../../packages/variant-config/dist"],
+      "@memoriaali/variant-config/*": ["../../packages/variant-config/dist/*"],
+      "@memoriaali/file-processing": ["../../packages/file-processing/dist"],
+      "@memoriaali/file-processing/*": ["../../packages/file-processing/dist/*"],
+      "@__mocks__/*": ["./src/__mocks__/*"],
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*", "swagger.config.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/**/__specs__/**/*",
+    "src/**/*.spec.ts",
+    "src/**/*.test.ts"
+  ]
+}

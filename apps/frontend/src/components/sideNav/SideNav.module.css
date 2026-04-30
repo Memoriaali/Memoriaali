@@ -1,0 +1,68 @@
+/* Close button inside the sidebar */
+.closeBtn {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: transparent;
+  border: none;
+  color: var(--bs-secondaryText);
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 900; /* Ensure button is above sidebar content */
+}
+
+/* Hide the close button on screens wider than 768px */
+@media (min-width: 769px) {
+  .closeBtn {
+    display: none !important;
+  }
+}
+
+/* Sidebar nav links */
+.navLink {
+  padding: 20px 15px !important;
+  display: flex !important;
+  align-items: center;
+  color: var(--bs-secondaryText) !important;
+}
+
+.navLink svg {
+  margin-right: 10px; /* Space between icon and text */
+  color: var(--bs-secondaryText) !important;
+}
+
+.navLink:hover {
+  background-color: var(--bs-primaryHover);
+}
+
+/* Sidebar nav links with more left padding*/
+.navLinkIndent {
+  padding: 20px 28px !important;
+  display: flex !important;
+  align-items: center;
+  color: var(--bs-secondaryText) !important;
+}
+
+.navLinkIndent svg {
+  margin-right: 10px; /* Space between icon and text */
+  color: var(--bs-secondaryText) !important;
+}
+
+.navLinkIndent:hover {
+  background-color: var(--bs-primaryHover);
+}
+
+/* Sidebar dropdown menu */
+.navbarNav {
+  flex-direction: column;
+}
+
+.addFileModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(92, 92, 92, 0.5);
+  z-index: 1055;
+}

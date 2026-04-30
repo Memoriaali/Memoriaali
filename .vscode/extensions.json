@@ -1,0 +1,15 @@
+{
+  // Recommended VS Code extensions for this project
+  "recommendations": [
+    "betterplace.betterplace-vscode-vitest-runner", // Vitest runner,
+    "bierner.markdown-mermaid", // Mermaid diagrams in Markdown
+    "bradlc.vscode-tailwindcss", // Tailwind CSS support
+    "dbaeumer.vscode-eslint", // ESLint integration
+    "esbenp.prettier-vscode", // Prettier code formatter
+    "ms-playwright.playwright", // Playwright support
+    "ms-vscode.vscode-typescript-next", // TypeScript support (next version)
+    "ms-vscode.vscode-typescript-tslint-plugin", // TypeScript TSLint plugin (if needed)
+    "Prisma.prisma", // Prisma support
+    "yzhang.markdown-all-in-one", // Enhanced Markdown editing
+  ]
+}

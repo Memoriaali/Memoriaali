@@ -1,0 +1,29 @@
+{
+  "name": "@memoriaali/tsconfig",
+  "version": "1.0.0",
+  "description": "Shared TypeScript configurations for Memoriaali v2.0 monorepo",
+  "files": [
+    "base.json",
+    "node.json",
+    "react.json",
+    "README.md"
+  ],
+  "keywords": [
+    "typescript",
+    "config",
+    "memoriaali",
+    "tsconfig",
+    "monorepo"
+  ],
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "test": "echo 'TypeScript config - validated through dependent packages'",
+    "test:watch": "echo 'TypeScript config - no watch mode needed'",
+    "test:coverage": "echo 'TypeScript config - no coverage for config files'"
+  }
+}

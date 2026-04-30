@@ -1,0 +1,14 @@
+.adminSettingsCard {
+  margin-bottom: 2rem;
+  background-color: var(--bs-secondaryBg);
+  color: var(--bs-text);
+}
+
+.adminSettingsHeader {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.adminSettingsButton {
+  width: 16rem;
+}

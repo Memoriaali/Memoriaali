@@ -1,0 +1,43 @@
+{
+  "name": "@backend/e2e",
+  "version": "1.0.0",
+  "description": "Backend E2E testing package for Memoriaali REST API using Vitest + Supertest",
+  "type": "module",
+  "scripts": {
+    "env:setup": "./scripts/setup-backend-e2e-env.sh",
+    "env:teardown": "./scripts/teardown-backend-e2e-env.sh",
+    "test:api": "vitest run",
+    "test:api:watch": "vitest",
+    "test:api:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "test:ci": "npm run env:setup && npm run test:api && npm run env:teardown",
+    "test:debug": "vitest --inspect-brk"
+  },
+  "keywords": [
+    "e2e",
+    "testing",
+    "vitest",
+    "supertest",
+    "backend",
+    "rest-api",
+    "memoriaali"
+  ],
+  "author": "Memoriaali Development Team",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@memoriaali/api-types": "workspace:*",
+    "@memoriaali/database": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.10",
+    "@types/supertest": "^6.0.3",
+    "@vitest/coverage-v8": "^3.2.4",
+    "supertest": "^7.1.4",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

@@ -1,0 +1,42 @@
+.column {
+  text-align: center;
+}
+
+.cardStyle {
+  margin-top: 1vh;
+  margin-bottom: 1vh;
+  background-color: var(--bs-secondaryBg);
+  color: var(--bs-text);
+}
+
+.cardTextCenter {
+  display: flex;
+  align-items: center;
+}
+
+.trashIcon {
+  font-size: 1.5rem;
+}
+
+.trashIcon:hover {
+  cursor: pointer;
+}
+
+.cardImage {
+  height: 8rem;
+  object-fit: contain;
+}
+
+.fileIcon {
+  font-size: 8rem;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(92, 92, 92, 0.5);
+  z-index: 1055;
+}

@@ -1,0 +1,4 @@
+body {
+  background-color: var(--bs-background) !important;
+  color: var(--bs-light) !important;
+}

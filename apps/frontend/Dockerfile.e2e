@@ -1,0 +1,32 @@
+# Multi-stage Dockerfile for Frontend E2E Testing
+FROM node:20-alpine AS base
+
+# Set working directory
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Install system dependencies
+RUN apk add --no-cache curl
+
+# Copy package files
+COPY package*.json pnpm-lock.yaml ./
+
+# Install dependencies
+RUN pnpm install --frozen-lockfile
+
+# Copy source code
+COPY . .
+
+# Build the Next.js application
+RUN pnpm build
+
+# Expose port
+EXPOSE 3000
+
+# Add health check endpoint support
+RUN echo '{"status":"ok"}' > public/health.json
+
+# Start the application
+CMD ["pnpm", "start"] 

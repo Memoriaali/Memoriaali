@@ -1,0 +1,68 @@
+/* Wrapper for the whole container */
+.sidenavWrapper {
+  position: relative;
+  margin-top: -2vh; /* Adjust this value to counteract the top margin of the banner image */
+  margin-bottom: 0; /* Adjust this value to counteract the bottom margin of the footer */
+  overflow: visible;
+}
+
+@media (min-width: 768px) {
+  .sidenavWrapper {
+    display: flex;
+    flex-direction: row; /* Sidebar and main content side by side */
+    flex: 1; /* Allow it to grow and take available vertical space */
+  }
+}
+
+/* Main content area */
+.mainContent {
+  flex-grow: 1; /* Take remaining horizontal space */
+  transition: margin-left 0.3s ease-in-out;
+}
+
+/* Sidebar container styles */
+.sidebar {
+  position: sticky;
+  top: 0;
+  width: 250px;
+  background-color: var(--bs-primary);
+  padding-top: 1rem;
+  padding-bottom: 4rem;
+  overflow-y: auto !important; /* Allows the sidebar content to scroll */
+  min-height: 100vh; /* Full viewport height */
+  z-index: 1000;
+  height: 80vh;
+}
+
+.sidebar.closed {
+  transform: translateX(-100%);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sidebar {
+    position: absolute; /*fixed makes sidenav fullscreen*/
+    width: 100%;
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    height: 100vh;
+    overflow-y: auto;
+  }
+
+  .bodyNoScroll {
+    overflow: hidden;
+  }
+
+  .mobileToggleBtn {
+    height: 2.5rem;
+    margin-top: 2vh;
+    margin-left: 5vw;
+  }
+
+  .closeBtn {
+    position: fixed;
+  }
+}

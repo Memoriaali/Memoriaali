@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  # Dedicated MySQL database for Database Package Tests
+  mysql-database-test:
+    image: mysql:8.0
+    container_name: memoriaali-database-test-db
+    environment:
+      MYSQL_ROOT_PASSWORD: database_test_root_password_123
+      MYSQL_DATABASE: memoriaali_database_test
+      MYSQL_USER: memoriaali_database_test_user
+      MYSQL_PASSWORD: database_test_user_password_123
+    ports:
+      - '33062:3306' # Non-conflicting port (backend E2E: 33060, frontend E2E: 33061)
+    volumes:
+      - mysql_database_test_data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+      timeout: 20s
+      retries: 10
+      interval: 10s
+    networks:
+      - database-test-network
+
+volumes:
+  mysql_database_test_data:
+    driver: local
+
+networks:
+  database-test-network:
+    driver: bridge

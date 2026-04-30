@@ -1,0 +1,16 @@
+<testsuites id="" name="" tests="3" failures="0" skipped="3" errors="0" time="0.3143319999999999">
+<testsuite name="api/health.spec.ts" timestamp="2025-07-23T11:07:53.829Z" hostname="backend-api" tests="3" failures="0" skipped="3" time="0" errors="0">
+<testcase name="Backend Health Endpoint › health endpoint responds with 200 status" classname="api/health.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Backend Health Endpoint › health endpoint returns valid JSON response" classname="api/health.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+<testcase name="Backend Health Endpoint › health endpoint responds within reasonable time" classname="api/health.spec.ts" time="0">
+<skipped>
+</skipped>
+</testcase>
+</testsuite>
+</testsuites>

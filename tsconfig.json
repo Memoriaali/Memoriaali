@@ -1,0 +1,25 @@
+{
+  "files": [],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@memoriaali/database": ["packages/database/dist"],
+      "@memoriaali/database/*": ["packages/database/dist/*"],
+      "@memoriaali/database/generated/client": ["packages/database/generated/client"],
+      "@memoriaali/api-types": ["packages/api-types/dist"],
+      "@memoriaali/api-types/*": ["packages/api-types/dist/*"],
+      "@memoriaali/shared": ["packages/shared/dist"],
+      "@memoriaali/shared/*": ["packages/shared/dist/*"]
+    }
+  },
+  "exclude": ["legacy/**"],
+  "references": [
+    { "path": "packages/access-control" },
+    { "path": "packages/api-types" },
+    { "path": "packages/database" },
+    { "path": "packages/shared" },
+    { "path": "packages/variant-config" },
+    { "path": "apps/backend" },
+    { "path": "apps/frontend" }
+  ]
+}

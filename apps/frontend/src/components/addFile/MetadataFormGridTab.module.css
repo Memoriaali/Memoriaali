@@ -1,0 +1,56 @@
+.column {
+  text-align: center;
+}
+
+.cardStyle {
+  margin-bottom: 2vh;
+  background-color: var(--bs-secondaryBg);
+  color: var(--bs-text);
+}
+
+.cardTextCenter {
+  display: flex;
+  align-items: center;
+}
+
+.cardImage {
+  height: 8rem;
+  object-fit: contain;
+}
+
+.fileIcon {
+  font-size: 8rem;
+}
+
+.showButton {
+  margin-right: 5%;
+}
+
+.modalBg {
+  background-color: var(--bs-modalBg);
+  color: var(--bs-text);
+}
+
+.modalTitle {
+  text-align: center;
+  width: 100%;
+}
+
+.customClose {
+  color: var(--bs-text);
+  font-size: 1.5rem;
+  border: none;
+  background: transparent;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.customClose:hover {
+  color: var(--bs-text);
+}
+
+.modalHeader {
+  border-radius: 0%;
+}

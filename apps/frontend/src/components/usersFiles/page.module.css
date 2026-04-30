@@ -1,0 +1,42 @@
+.navButtons {
+  width: 100%;
+  height: 100%;
+}
+
+.navColumn {
+  margin-bottom: 1rem;
+}
+
+.contentHeader {
+  margin-bottom: 2rem;
+}
+
+@media only screen and (max-width: 433px) {
+  .navButtons {
+    min-height: 6rem;
+  }
+
+  .contentHeader {
+    margin-bottom: 1rem;
+  }
+}
+
+@media only screen and (max-width: 768px) and (min-width: 434px) {
+  .navButtons {
+    min-height: 4rem;
+  }
+
+  .contentHeader {
+    margin-bottom: 1rem;
+  }
+}
+
+.addFileModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(92, 92, 92, 0.5);
+  z-index: 1055;
+}

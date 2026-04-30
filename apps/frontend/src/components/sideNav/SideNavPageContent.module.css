@@ -1,0 +1,34 @@
+.sidenavPageContent {
+  /* Default padding for larger screens */
+  padding-left: calc(var(--bs-gutter-x) * 3.5) !important;
+  padding-right: calc(var(--bs-gutter-x) * 3.5) !important;
+  padding-top: 35px; /* Default top padding */
+  width: 100vw;
+}
+
+@media (max-width: 1199.98px) {
+  .sidenavPageContent {
+    /* Default padding for larger screens */
+    padding-left: calc(var(--bs-gutter-x) * 2) !important;
+    padding-right: calc(var(--bs-gutter-x) * 2) !important;
+    padding-top: 35px; /* Default top padding */
+  }
+}
+
+@media (max-width: 991.98px) {
+  .sidenavPageContent {
+    /* Default padding for larger screens */
+    padding-left: calc(var(--bs-gutter-x) * 1.5) !important;
+    padding-right: calc(var(--bs-gutter-x) * 1.5) !important;
+    padding-top: 35px; /* Default top padding */
+  }
+}
+
+/* Apply styles for small screen devices (sm breakpoint) */
+@media (max-width: 575.98px) {
+  .sidenavPageContent {
+    padding-left: calc(var(--bs-gutter-x) * 1.15) !important; /* Increased left padding */
+    padding-right: calc(var(--bs-gutter-x) * 1.15) !important; /* Increased right padding */
+    padding-top: 20px; /* Adjusted top padding for mobile */
+  }
+}

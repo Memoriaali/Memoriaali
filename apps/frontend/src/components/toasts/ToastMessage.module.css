@@ -1,0 +1,9 @@
+.toastHeaderCustom {
+  background-color: rgb(255, 255, 255) !important;
+  color: rgb(0, 0, 0) !important;
+}
+
+.toastBodyCustom {
+  background-color: rgb(255, 255, 255); /* Adjust the opacity value as needed */
+  color: rgb(0, 0, 0);
+}

@@ -1,0 +1,19 @@
+.filesCard {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background-color: var(--bs-fileCardBg);
+}
+
+.buttonContainer {
+  display: flex;
+}
+
+.btnButton {
+  margin-right: 1rem;
+}
+
+.cardImage {
+  height: 35vh;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}

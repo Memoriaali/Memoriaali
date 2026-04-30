@@ -1,0 +1,28 @@
+.confirmationModalBg {
+  background-color: var(--bs-modalBg);
+  color: var(--bs-text);
+}
+
+.confirmationModalTitle {
+  text-align: center;
+  width: 100%;
+}
+
+.userToDelete {
+  color: var(--bs-danger);
+}
+
+.customClose {
+  color: var(--bs-text);
+  font-size: 1.5rem;
+  border: none;
+  background: transparent;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.customClose:hover {
+  color: var(--bs-text);
+}

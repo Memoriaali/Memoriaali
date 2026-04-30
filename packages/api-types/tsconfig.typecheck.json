@@ -1,0 +1,15 @@
+{
+  "extends": "@memoriaali/tsconfig/base.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": ["src/schemas/**/*.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/__specs__/**",
+    "src/generated/**",
+    "src/index.ts"
+  ]
+}

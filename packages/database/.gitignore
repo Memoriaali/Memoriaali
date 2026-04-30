@@ -1,0 +1,15 @@
+node_modules/
+dist/
+
+coverage/
+.env
+.env.test
+test-results/
+*.log
+
+# Database test artifacts
+test.db
+test.db-journal
+
+generated
+

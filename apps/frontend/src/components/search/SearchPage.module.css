@@ -1,0 +1,36 @@
+.openFilters {
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+.searchInputGroup {
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.infoCircle {
+  font-size: 200%;
+  margin-left: 0.5rem !important;
+  margin: auto;
+}
+
+.clearButton {
+  position: absolute !important;
+  right: 125px !important; /* Adjust this value as needed */
+  top: 50% !important;
+  transform: translateY(-50%);
+  z-index: 10 !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  color: #000 !important;
+  display: block !important; /* Ensure the button is always visible */
+}
+
+.searchInputGroup input:focus + .clearButton {
+  display: block;
+}
+
+.loadingText {
+  color: var(--bs-text);
+}

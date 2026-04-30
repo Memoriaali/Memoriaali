@@ -1,0 +1,68 @@
+.cardTime {
+  font-size: small;
+}
+
+.commentCard {
+  position: relative;
+  margin-bottom: 1rem;
+  background-color: var(--bs-modalBg);
+  color: var(--bs-text);
+}
+
+.cardIcon {
+  margin-left: 0.5rem;
+  color: #7e7e7e;
+}
+
+.cardIcon:hover {
+  cursor: pointer;
+  color: #d1cfcf;
+}
+
+.stateBadge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+
+  padding: 0.25rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  text-transform: uppercase;
+}
+
+.stateBadge.approved {
+  background-color: var(--bs-success);
+  color: var(--bs-secondaryText);
+}
+
+.pending {
+  border-left: 4px solid var(--bs-warning);
+  background-color: rgba(255, 193, 7, 0.05);
+}
+
+.stateBadge.pending {
+  background-color: var(--bs-warning);
+  color: var(--bs-secondaryText);
+}
+
+.rejected {
+  border-left: 4px solid var(--bs-danger);
+  background-color: rgba(220, 53, 69, 0.05);
+  opacity: 0.85;
+}
+
+.stateBadge.rejected {
+  background-color: var(--bs-danger);
+  color: var(--bs-text);
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(92, 92, 92, 0.5);
+  z-index: 1055;
+}

@@ -1,0 +1,22 @@
+.card {
+  border: none;
+  margin-bottom: 2vh;
+  background-color: var(--bs-background) !important;
+  color: var(--bs-text) !important;
+  padding: 0;
+}
+
+.cardTitle {
+  font-size: 2rem;
+  margin-bottom: 2vh;
+}
+
+.cardTextCenter {
+  display: flex;
+  align-items: center;
+}
+
+.cardImage {
+  height: 45vh !important;
+  object-fit: cover;
+}

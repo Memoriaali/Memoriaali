@@ -1,0 +1,25 @@
+.questionContainer {
+  padding: 1rem 0.5rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.questionNo {
+  text-align: center;
+  width: 100%;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0;
+}
+
+.buttonRight {
+  margin-left: auto;
+}

@@ -1,0 +1,12 @@
+.container {
+  padding-bottom: 15px;
+}
+
+.counter {
+  font-size: 1.5em;
+}
+
+.lessThanMinute {
+  color: var(--bs-danger);
+  font-size: 2em;
+}

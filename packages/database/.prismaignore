@@ -1,0 +1,5 @@
+# Ignore generated files to prevent duplicate schema processing
+generated/
+node_modules/
+dist/
+.turbo/ 

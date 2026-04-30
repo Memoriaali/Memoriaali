@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./base.json",
+  "compilerOptions": {
+    // React and browser specific
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    // JSX configuration
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    // Browser environment
+    "types": ["react", "react-dom"],
+    "allowJs": false,
+    // Output configuration for bundlers
+    "noEmit": true,
+    "isolatedModules": true,
+    // Module resolution for React apps
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    // Path mapping for monorepo packages
+    "baseUrl": ".",
+    "paths": {
+      "@memoriaali/api-types": ["../../packages/api-types/dist"],
+      "@memoriaali/api-types/*": ["../../packages/api-types/dist/*"],
+      "@memoriaali/shared": ["../../packages/shared/dist"],
+      "@memoriaali/shared/*": ["../../packages/shared/dist/*"],
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/components/*"],
+      "@/pages/*": ["./src/pages/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/types/*": ["./src/types/*"],
+      "@/assets/*": ["./src/assets/*"]
+    }
+  },
+  "include": ["src/**/*", "**/*.ts", "**/*.tsx"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    "coverage",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ]
+}

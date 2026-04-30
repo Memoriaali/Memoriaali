@@ -1,0 +1,6 @@
+{
+  "eslint.options": {
+    "configFile": "apps/backend/eslint.config.dev.js"
+  },
+  "eslint.validate": ["javascript", "typescript"]
+}

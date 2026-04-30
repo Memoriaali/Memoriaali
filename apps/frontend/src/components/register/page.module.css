@@ -1,0 +1,38 @@
+.header-text {
+  margin-bottom: 2vh;
+  font-size: 30px;
+}
+
+.columns {
+  padding-left: 2vh !important;
+  padding-right: 2vh !important;
+}
+
+@media only screen and (min-width: 768px) {
+  .column-left {
+    border-right: 1px solid #c1c1c1;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .column-left {
+    border-bottom: 1px solid #c1c1c1;
+    margin-bottom: 2vh;
+  }
+}
+
+.form-label {
+  margin-bottom: 1vh !important;
+  margin-top: 1vh !important;
+  font-weight: bold;
+}
+
+.button {
+  margin-top: 2vh !important;
+  margin-bottom: 2vh !important;
+}
+
+.validation-error-text {
+  margin-bottom: 2vh !important;
+  color: red;
+}
