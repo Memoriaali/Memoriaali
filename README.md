@@ -1,8 +1,8 @@
-# Memoriaali v2.0
+# Memoriaali v2
 
 > **Digital Archive Reception Platform** - Finnish memory institution service with monorepo architecture
 
-Memoriaali 2.0 is a platform for receiving archival materials for Finnish memory institutions.
+Memoriaali v2 is a platform for receiving archival materials for Finnish memory institutions.
 
 ### What Has Been Achieved
 
@@ -13,13 +13,7 @@ Memoriaali 2.0 is a platform for receiving archival materials for Finnish memory
 ✅ **SIP Service**: Java-based E-ARK compliant archival package generation  
 ✅ **Testing**: Unit, integration, and E2E testing infrastructure
 
-### What is still to come to UI
-
-- **SIP package generation**: E-ARK compliant SIP package generation
-- **Collection tools**: Possibility to group documents into collections
-- **Document management tools** : Combining the two into one handy document management tool
-
-## What Memoriaali v2.0 Provides
+## What Memoriaali v2 Provides
 
 ### Core Capabilities
 
@@ -77,7 +71,7 @@ You can find more detailed architecture documentation from **[📋 this architec
 
 ### Prerequisites Understanding
 
-Memoriaali v2.0 requires Node.js, pnpm, and Docker for the complete development environment.
+Memoriaali v2 requires Node.js, pnpm, and Docker for the complete development environment.
 
 ### Environment Setup
 

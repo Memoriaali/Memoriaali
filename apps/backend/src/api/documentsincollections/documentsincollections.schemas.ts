@@ -83,6 +83,7 @@ export const DocumentInCollectionSchema = z.object({
   updatedAt: z.date(),
   addedToCollectionAt: z.date(),
   addedBy: z.string(),
+  mimeType: z.string(),
   user: z.object({
     id: z.string(),
     username: z.string(),

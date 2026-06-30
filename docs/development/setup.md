@@ -1,6 +1,6 @@
 # Development Environment Setup
 
-This guide provides a step-by-step process for setting up and working with the Memoriaali v2.0 development environment.
+This guide provides a step-by-step process for setting up and working with the Memoriaali v2 development environment.
 
 After completing this guide, you will have a functional development environment supporting the Memoriaali system, with all required tools, databases, and workflows ready for use.
 
@@ -78,7 +78,7 @@ javac --version   # Should be 21.x+
 ```bash
 # Download from: https://github.com/keeps/commons-ip/releases/tag/2.10.0
 mkdir -p jars
-# Place commons-ip-cli-2.10.0.jar in jars/ directory
+# Place commons-ip2-cli-2.10.0.jar in jars/ directory
 ```
 
 ---

@@ -3,6 +3,10 @@
   height: 100%;
 }
 
+.text {
+  color: var(--bs-text);
+}
+
 .navColumn {
   margin-bottom: 1rem;
 }

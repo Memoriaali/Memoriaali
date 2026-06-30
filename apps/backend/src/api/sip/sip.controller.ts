@@ -85,7 +85,7 @@ export class SIPController {
    * Extract payload from database job's JsonValue metadata field with runtime validation
    */
   private extractPayload(job: SipJob): JobPayload {
-    const validated = JobPayloadSchema.safeParse(job.metadata);
+    const validated = JobPayloadSchema.safeParse(job);
 
     if (!validated.success) {
       this.logger.warn('Invalid job metadata structure', {
@@ -147,6 +147,7 @@ export class SIPController {
    */
   createSIP = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const input = CreateSIPRequestSchema.parse(req.body);
+
     const currentUser = req.authenticatedUser;
 
     if (!currentUser) {
@@ -320,6 +321,8 @@ export class SIPController {
   private sendJobProgressEvent(res: Response, job: SipJob): void {
     const payload = this.extractPayload(job);
     const err = this.extractError(job);
+
+    const documentIds = Array.isArray(job.documentIds) ? job.documentIds : [];
 
     const progressEvent: SIPProgress = {
       externalId: job.externalId,

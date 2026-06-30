@@ -3,6 +3,10 @@
   margin-bottom: 1rem;
 }
 
+.filterText{
+  color: var(--bs-text);
+}
+
 .searchInputGroup {
   margin-bottom: 1rem;
   position: relative;

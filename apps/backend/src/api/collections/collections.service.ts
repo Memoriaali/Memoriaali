@@ -60,6 +60,7 @@ export class CollectionsService {
    * Postconditions: Collection created in database, audit log entry created
    * Invariants: Collection name uniqueness maintained
    */
+
   async createCollection(
     collectionData: CreateCollectionInput,
     authenticatedUser: AuthenticatedUser,
@@ -76,9 +77,23 @@ export class CollectionsService {
           createdById: authenticatedUser.id,
           updatedById: authenticatedUser.id,
         },
+        include: {
+          _count: {
+            select: {
+              documentsInCollections: true,
+            },
+          },
+        },
       });
 
-      return collection;
+      // Prisma returns relation count as `documentsInCollections`.
+      // Normalize it to `documents` to keep API response consistent.
+      return {
+        ...collection,
+        _count: {
+          documents: collection._count.documentsInCollections,
+        },
+      };
     });
   }
 
@@ -183,9 +198,23 @@ export class CollectionsService {
       const updatedCollection = await tx.collection.update({
         where: { id: collectionId },
         data: updatePayload as Prisma.CollectionUpdateInput,
+        include: {
+          _count: {
+            select: {
+              documentsInCollections: true,
+            },
+          },
+        },
       });
 
-      return updatedCollection;
+      // Prisma returns relation count as `documentsInCollections`.
+      // Normalize it to `documents` to keep API response consistent.
+      return {
+        ...updatedCollection,
+        _count: {
+          documents: updatedCollection._count.documentsInCollections,
+        },
+      };
     });
   }
 

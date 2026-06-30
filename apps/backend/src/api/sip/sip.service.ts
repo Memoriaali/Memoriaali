@@ -81,8 +81,8 @@ export class SIPService {
   private readonly javaBridgeService: JavaBridgeService;
 
   // Configuration constants
-  private readonly UPLOAD_BASE_PATH = process.env.UPLOAD_PATH ?? '/app/uploads';
-  private readonly SIP_OUTPUT_PATH = process.env.SIP_OUTPUT_PATH ?? '/app/sips';
+  private readonly UPLOAD_BASE_PATH = process.env.UPLOAD_PATH ?? 'storage';
+  private readonly SIP_OUTPUT_PATH = process.env.SIP_OUTPUT_PATH ?? 'storage/sips';
   private readonly SIP_RETENTION_DAYS = parseInt(process.env.SIP_RETENTION_DAYS ?? '30', 10);
 
   constructor() {
@@ -126,8 +126,8 @@ export class SIPService {
           ? (metadata as Record<string, unknown>)
           : {};
 
-      const documentIds: string[] = Array.isArray(meta.documentIds)
-        ? (meta.documentIds as string[])
+      const documentIds: string[] = Array.isArray(job.documentIds)
+        ? (job.documentIds as string[])
         : [];
 
       if (documentIds.length === 0) {
@@ -305,7 +305,6 @@ export class SIPService {
           this.logger.info(`🧹 Cleaned up workspace for job ${job.id}`);
         } catch (cleanupError) {
           this.logger.error(`⚠️ Failed to cleanup workspace for job ${job.id}:`, cleanupError);
-          // Don't throw cleanup errors, just log them
         }
       }
     }
@@ -487,11 +486,11 @@ export class SIPService {
   ): Promise<SIPProcessingResult> {
     const sipId = `sip-${Date.now()}-${Math.random().toString(36).substring(2, 8)}`;
     const outputDir = join(workspaceDir, 'output');
-    const sipOutputPath = join(outputDir, `${sipId}.zip`);
 
     // Prepare files array for Java service
     const filesForSip = documents.map((document, index) => {
       const copiedFile = copiedFiles[index];
+
       const metadataFile = metadataFiles[index];
 
       if (!copiedFile || !metadataFile) {
@@ -538,7 +537,7 @@ export class SIPService {
     // Create SIP configuration
     const sipConfig = {
       sipId,
-      outputPath: sipOutputPath,
+      outputPath: outputDir,
       dcMetadataPath: mainDcPath, // Use first document's DC metadata
       premisMetadataPath: premisPath,
       metadataFormat: 'dc' as const,
@@ -555,14 +554,14 @@ export class SIPService {
     };
 
     // Call Java service to create SIP
-    await this.javaBridgeService.createSIPPackage(sipConfig);
+    const sipResult = await this.javaBridgeService.createSIPPackage(sipConfig);
 
     // Get file size
-    const stats = await fs.stat(sipOutputPath);
+    const stats = await fs.stat(sipResult.sipFilePath);
 
     return {
       sipId,
-      sipPath: sipOutputPath,
+      sipPath: sipResult.sipFilePath,
       documentCount: documents.length,
       size: stats.size,
       metadata: {
@@ -692,6 +691,3 @@ export class SIPService {
     }
   }
 }
-
-// Export singleton instance
-export const sipService = new SIPService();

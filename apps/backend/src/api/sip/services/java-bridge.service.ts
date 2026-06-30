@@ -140,6 +140,7 @@ interface JavaEnvironment {
 export class JavaBridgeService {
   private readonly logger = new Logger('JavaBridgeService');
   private readonly javaEnv: JavaEnvironment;
+  private readonly OUTPUT_DIR = process.env.SIP_OUTPUT_PATH ?? 'storage/sips';
 
   constructor() {
     this.javaEnv = this.loadJavaEnvironment();
@@ -223,7 +224,13 @@ export class JavaBridgeService {
       });
 
       // Parse output to extract SIP file path
-      const sipFilePath = this.parseJavaOutput(stdout, config.outputPath);
+      const match = stdout.match(/'([^']+\.zip)'/);
+
+      if (!match?.[1]) {
+        throw new Error('SIP zip path not found in Java output');
+      }
+
+      const sipFilePath: string = match[1].replace(/['"]/g, '');
 
       // Validate created package
       const packageStats = await stat(sipFilePath);
@@ -334,7 +341,7 @@ export class JavaBridgeService {
         config.sipId,
 
         // Output directory
-        '--output',
+        '-p',
         config.outputPath,
       ];
 
@@ -345,9 +352,9 @@ export class JavaBridgeService {
 
       // Add agent/archivist if supported (check commons-ip2 docs)
       // Note: May need to use --agent-name if available in v2.10.0
-      if (config.archivist?.name) {
-        args.push('--agent-name', config.archivist.name);
-      }
+      // if (config.archivist?.name) {
+      //   args.push('--agent-name', config.archivist.name);
+      // }
 
       // Add representation data (comma-separated file paths)
       if (config.files && config.files.length > 0) {
@@ -672,7 +679,7 @@ export class JavaBridgeService {
    * Load Java environment configuration from environment variables
    */
   private loadJavaEnvironment = (): JavaEnvironment => {
-    const jarPath = process.env.SIP_JAR_PATH;
+    const jarPath = process.env.SIP_JAR_PATH ?? '../../jars/commons-ip2-cli-2.10.0.jar';
     if (!jarPath) {
       throw new Error('SIP JAR path is not set');
     }

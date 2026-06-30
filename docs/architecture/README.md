@@ -1,10 +1,10 @@
 # Architecture Documentation
 
-> **System design and architectural decisions for Memoriaali v2.0**
+> **System design and architectural decisions for Memoriaali v2**
 
 ## 🎯 Architecture Overview
 
-The Memoriaali v2.0 project is a scalable monorepo architecture. This section documents the architectural decisions and system design.
+The Memoriaali v2 project is a scalable monorepo architecture. This section documents the architectural decisions and system design.
 
 ## 🏗️ High-Level System Architecture
 
@@ -12,7 +12,7 @@ The Memoriaali v2.0 project is a scalable monorepo architecture. This section do
 
 ```mermaid
 graph TB
-    subgraph "Memoriaali 2.0"
+    subgraph "Memoriaali V2"
         M1["Next.js Frontend<br/>React 19 + TypeScript"]
         M2["TypeScript Backend<br/>Four-layer architecture"]
         M3["Prisma + MySQL<br/>Modern schema"]
@@ -237,4 +237,4 @@ sequenceDiagram
 
 ---
 
-**Last Updated**: April 2026
+**Last Updated**: June 2026

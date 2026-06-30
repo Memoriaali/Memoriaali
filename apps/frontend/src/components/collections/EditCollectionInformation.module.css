@@ -1,0 +1,34 @@
+.card {
+  margin-bottom: 2rem;
+  background-color: var(--bs-secondaryBg);
+  color: var(--bs-text);
+}
+
+.inputMargin {
+  margin-bottom: 1rem;
+}
+
+.inputLabel {
+  font-weight: bold;
+}
+
+.btnButton {
+  margin-bottom: 1rem;
+}
+
+.settingsTd {
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+}
+
+.settingsTdCenter {
+  text-align: center;
+}
+
+.formLabel {
+  font-weight: bold;
+}
+
+.formControl {
+  margin-bottom: 1rem;
+}

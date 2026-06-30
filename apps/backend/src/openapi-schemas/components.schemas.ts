@@ -69,9 +69,20 @@ const PaginationLinksSchema = z.object({
 
 register('PaginationLinks', PaginationLinksSchema);
 
+const CollectionWithCountSchema = CollectionSchema.extend({
+    /**
+   * Optional collection document count
+   */
+  _count: z.object({
+      documents: z.number().optional(),
+    })
+    .optional(),
+});
+
+register('Collection', CollectionWithCountSchema);
+
 // Generated schemas from @memoriaali/api-types/generated
 // These work with zod-openapi using native .meta()
-register('Collection', CollectionSchema);
 register('Document', DocumentSchema);
 register('Group', GroupSchema);
 register('ResearchRequest', ResearchRequestSchema);

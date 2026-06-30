@@ -10,12 +10,12 @@ services:
       MYSQL_USER: memoriaali
       MYSQL_PASSWORD: memoriaali_pass
     ports:
-      - "3306:3306"
+      - '3306:3306'
     volumes:
       - mysql_data:/var/lib/mysql
       - ./tools/docker/mysql-init.sql:/docker-entrypoint-initdb.d/mysql-init.sql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       timeout: 20s
       retries: 10
 
@@ -26,7 +26,7 @@ services:
       dockerfile: apps/backend/Dockerfile
       target: development
     ports:
-      - "3001:3001"
+      - '3001:3001'
     environment:
       - NODE_ENV=development
       - DATABASE_URL=mysql://memoriaali:memoriaali_pass@mysql:3306/memoriaali
@@ -44,14 +44,14 @@ services:
     profiles:
       - backend
 
-  # React Frontend (when ready)  
+  # React Frontend (when ready)
   frontend:
     build:
       context: .
       dockerfile: apps/frontend/Dockerfile
       target: development
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - REACT_APP_API_URL=http://localhost:3001
       - CHOKIDAR_USEPOLLING=true
@@ -72,17 +72,17 @@ services:
       dockerfile: apps/sip-service/Dockerfile
       target: development
     ports:
-      - "8080:8080"
+      - '8080:8080'
     environment:
       - SPRING_PROFILES_ACTIVE=development
-      - SIP_OUTPUT_PATH=/app/sip-packages
+      - SIP_OUTPUT_PATH=storage/sips
     volumes:
       - sip_packages:/app/sip-packages
       - document_storage:/app/documents:ro
     depends_on:
       - mysql
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:8080/actuator/health']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -97,7 +97,7 @@ services:
     environment:
       - DATABASE_URL=mysql://memoriaali:memoriaali_pass@mysql:3306/memoriaali
     ports:
-      - "5555:5555"
+      - '5555:5555'
     depends_on:
       mysql:
         condition: service_healthy

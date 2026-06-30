@@ -51,7 +51,7 @@ const SearchFilters = ({
   return (
     <Offcanvas show={show} onHide={handleClose} responsive='lg'>
       <Offcanvas.Header closeButton>
-        <Offcanvas.Title>{t('filterSearch')}</Offcanvas.Title>
+        <Offcanvas.Title className={styles.offCanvasTitle}>{t('filterSearch')}</Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body>
         <Accordion defaultActiveKey={['0']} className={styles.filtersAccordion} alwaysOpen>

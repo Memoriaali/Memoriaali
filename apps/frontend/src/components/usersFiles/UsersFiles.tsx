@@ -18,7 +18,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslations } from 'next-intl';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
 import { Button, Col, Container, Row, ToastContainer } from 'react-bootstrap';
 import RecordOralHistoryModal from '../../expansions/oralHistory/recordOralHistory/RecordOralHistoryModal';
@@ -45,6 +45,10 @@ const UsersFiles: React.FC = () => {
   const t = useTranslations('UsersFiles');
   const pathname = usePathname();
   const router = useRouter();
+
+  // Extract query parameters
+  const searchParams = useSearchParams();
+  const page = Number(searchParams.get('page') ?? 1);
 
   // This comes from variants and checks if the oral history is enabled by admins
   const feature = useFeatureConfig('oralHistory');
@@ -118,7 +122,7 @@ const UsersFiles: React.FC = () => {
   const [pagination, setPagination] = useState<Pagination>({
     total: 0,
     page: 1,
-    limit: 10,
+    limit: 20,
     pages: 0,
     hasNext: false,
     hasPrev: false,
@@ -126,14 +130,14 @@ const UsersFiles: React.FC = () => {
 
   const getDocumentsForUser = useCallback(async () => {
     try {
-      const result = await getUsersDocuments();
+      const result = await getUsersDocuments(page);
       if (result) {
         const docs = result.data?.data?.documents ?? [];
 
         const pagination = {
           total: result.data?.data?.pagination?.total ?? 0,
           page: result.data?.data?.pagination?.page ?? 1,
-          limit: result.data?.data?.pagination?.limit ?? 10,
+          limit: result.data?.data?.pagination?.limit ?? 20,
           pages: result.data?.data?.pagination?.pages ?? 0,
           hasNext: result.data?.data?.pagination?.hasNext ?? false,
           hasPrev: result.data?.data?.pagination?.hasPrev ?? false,
@@ -162,7 +166,7 @@ const UsersFiles: React.FC = () => {
         }
       }
     }
-  }, [getUsersDocuments, router, t]);
+  }, [getUsersDocuments, page, router, t]);
 
   useEffect(() => {
     getDocumentsForUser().catch(console.error);
@@ -277,7 +281,7 @@ const UsersFiles: React.FC = () => {
               <PagePagination pagination={pagination} />
             </>
           ) : (
-            <p>{t('noDocuments')}</p>
+            <p className={styles.text}>{t('noDocuments')}</p>
           )}
           <AddFileModal
             handleClose={handleClose}

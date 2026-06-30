@@ -134,9 +134,9 @@ export const createDocumentsInCollectionsRoutes = (): Router => {
    *                     type: object
    *                     properties:
    *                       id:
-   *                         type: integer
+   *                         type: string
    *                         description: Document ID
-   *                         example: 123
+   *                         example: "550e8400-e29b-41d4-a716-446655440001"
    *                       fileName:
    *                         type: string
    *                         description: Document filename
@@ -168,6 +168,9 @@ export const createDocumentsInCollectionsRoutes = (): Router => {
    *                         type: string
    *                         format: uuid
    *                         description: User ID who added document to collection
+   *                       mimeType:
+   *                         type: string
+   *                         description: Document mime type
    *                       user:
    *                         type: object
    *                         properties:

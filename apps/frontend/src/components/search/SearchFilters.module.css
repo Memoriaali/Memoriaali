@@ -10,6 +10,11 @@
 
 .filtersBadge {
   margin-left: 1rem;
+  color: var(--bs-text);
+}
+
+.offCanvasTitle{
+  color: var(--bs-text) !important;
 }
 
 .filtersAccordion :global(.accordion-button) {

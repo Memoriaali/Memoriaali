@@ -1,6 +1,7 @@
-.header-text {
+.headerText {
   margin-bottom: 2vh;
   font-size: 30px;
+  color: var(--bs-text) !important;
 }
 
 .columns {
@@ -21,10 +22,11 @@
   }
 }
 
-.form-label {
+.formLabel {
   margin-bottom: 1vh !important;
   margin-top: 1vh !important;
   font-weight: bold;
+  color: var(--bs-text) !important;
 }
 
 .button {
@@ -32,7 +34,11 @@
   margin-bottom: 2vh !important;
 }
 
-.validation-error-text {
+.validationErrorText {
   margin-bottom: 2vh !important;
   color: red;
+}
+
+.radioLabel{
+  color: var(--bs-text);
 }

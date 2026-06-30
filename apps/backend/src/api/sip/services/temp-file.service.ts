@@ -13,7 +13,7 @@
 
 import { createHash, randomBytes } from 'crypto';
 import { promises as fs, constants as fsConstants } from 'fs';
-import { tmpdir } from 'os';
+import { hostname, tmpdir } from 'os';
 import { basename, join } from 'path';
 
 import { ERROR_CODES, HttpException } from '../../../shared/errors';
@@ -120,7 +120,7 @@ export class TempFileService {
         jobId,
         pid: process.pid,
         createdAt: new Date().toISOString(),
-        hostname: require('os').hostname(),
+        hostname: hostname(),
       };
       await fs.writeFile(lockFile, JSON.stringify(lockData, null, 2), { mode: 0o644 });
 

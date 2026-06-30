@@ -38,9 +38,10 @@ export { type SIPPackageMode } from './sip.schemas';
 
 import { Logger } from '../../shared/utils/logger';
 import { sipOrchestrator } from './services/sip-orchestrator.service';
+import { SIPService } from './sip.service';
 
 const logger = new Logger('SIPModule');
-
+let sipService: SIPService;
 /**
  * Initialize the SIP module
  *
@@ -57,6 +58,7 @@ export const initializeSIPModule = async (): Promise<void> => {
     logger.info('Initializing SIP module...');
 
     // Initialize orchestrator (startup recovery + processing loop)
+    sipService = new SIPService();
     await sipOrchestrator.initialize();
 
     logger.info('SIP module initialized successfully (internal processing)');

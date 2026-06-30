@@ -223,6 +223,7 @@ const RegisterPage: React.FC = () => {
                 label={t('addUserInfoYes')}
                 checked={!showUserForm}
                 onChange={addUserInfo}
+                className={styles.radioLabel}
               />
 
               <Form.Check
@@ -232,6 +233,7 @@ const RegisterPage: React.FC = () => {
                 label={t('addUserInfoNo')}
                 checked={showUserForm}
                 onChange={dontAddUserInfo}
+                className={styles.radioLabel}
               />
             </Form.Group>
             <div hidden={showUserForm ? true : false}>
@@ -321,6 +323,7 @@ const RegisterPage: React.FC = () => {
                 label={t('privateAccountLabel')}
                 checked={showCompanyForm}
                 onChange={isNotCompany}
+                className={styles.radioLabel}
               />
 
               <Form.Check
@@ -330,6 +333,7 @@ const RegisterPage: React.FC = () => {
                 label={t('companyAccountLabel')}
                 checked={!showCompanyForm}
                 onChange={isCompany}
+                className={styles.radioLabel}
               />
             </Form.Group>
 
@@ -377,6 +381,7 @@ const RegisterPage: React.FC = () => {
               <Form.Check
                 id='accept-terms-switch'
                 type='switch'
+                className={styles.radioLabel}
                 label={
                   <>
                     {t('acceptTermsLabel')} <Link href='/register'>{t('acceptTermsLink')}</Link>

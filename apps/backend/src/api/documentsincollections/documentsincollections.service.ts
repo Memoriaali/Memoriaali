@@ -228,6 +228,7 @@ export class DocumentsInCollectionsService {
               userId: true,
               createdAt: true,
               updatedAt: true,
+              mimeType: true,
               user: {
                 select: {
                   id: true,

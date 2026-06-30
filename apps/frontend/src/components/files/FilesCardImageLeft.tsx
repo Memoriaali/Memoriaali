@@ -74,7 +74,7 @@ const FilesCardImageLeft: React.FC<FilesCardProps> = ({ id, document }) => {
   }, [id]);
 
   useEffect(() => {
-    if (isVisible) return;
+    if (!isVisible) return;
 
     // Serve from cache
     const cached = imageCache.get(id);

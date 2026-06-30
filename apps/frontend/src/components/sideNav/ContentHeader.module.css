@@ -1,5 +1,6 @@
 .contentHeader {
   margin-bottom: 2rem;
+  color: var(--bs-text);
 }
 
 @media only screen and (max-width: 433px) {

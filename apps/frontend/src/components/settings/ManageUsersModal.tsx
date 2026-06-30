@@ -334,7 +334,7 @@ const ManageUsersModal = ({
         </Form>
 
         {users.length > 0 ? (
-          <Table striped bordered hover responsive variant='dark'>
+          <Table striped bordered hover responsive variant='light'>
             <thead>
               <tr>
                 <th>{t('username')}</th>

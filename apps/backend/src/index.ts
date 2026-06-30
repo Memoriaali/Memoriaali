@@ -6,11 +6,7 @@ import express, { Express } from 'express';
 import { createV2Router } from './api/router';
 import { initializeSIPModule } from './api/sip/index.js';
 import { errorHandler, notFoundHandler } from './middleware/error-handler.middleware';
-import {
-  corsMiddleware,
-  rateLimitBasic,
-  securityHeadersMiddleware,
-} from './middleware/security.middleware.js';
+import { corsMiddleware, rateLimitBasic, securityHeadersMiddleware } from './middleware/security.middleware.js';
 import { disconnectPrisma, isDatabaseHealthy } from './shared/database/prisma.js';
 
 const app: Express = express();

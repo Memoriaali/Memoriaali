@@ -1,0 +1,113 @@
+.reactDropzoneContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  padding-top: 3rem;
+  border-width: 2px;
+  border-radius: 2px;
+  border-style: dashed;
+  background-color: #f3f0f0;
+  color: #242526;
+  border-color: #a0a1a5;
+  outline: none;
+  transition: border 0.24s ease-in-out;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  height: 10rem;
+  text-align: center;
+}
+
+.uploadIcon {
+  font-size: 30px;
+  margin-bottom: 0.5rem;
+}
+
+.formLabel {
+  font-weight: bold;
+}
+
+.modalBg {
+  background-color: var(--bs-modalBg);
+  color: var(--bs-text);
+}
+
+.modalTitle {
+  text-align: center;
+  width: 100%;
+}
+
+.customClose {
+  color: var(--bs-text);
+  font-size: 1.5rem;
+  border: none;
+  background: transparent;
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.customClose:hover {
+  color: var(--bs-text);
+}
+
+.modalHeader {
+  border-radius: 0%;
+}
+
+.image {
+  width: 80px;
+  object-fit: cover;
+  margin-right: 1rem;
+}
+
+.column {
+  text-align: center;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+}
+
+.image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.actions {
+  margin-left: auto;
+}
+
+.trashIcon {
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.trashIcon:hover {
+  opacity: 1;
+}

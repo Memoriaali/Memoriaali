@@ -195,7 +195,7 @@ export class SIPJobRepository {
    * Update job progress
    */
   async updateProgress(
-    externalId: string,
+    id: string,
     update: { stage?: SipJobStage; progress?: number },
   ): Promise<void> {
     const data: DbPrisma.SipJobUpdateInput = {};
@@ -208,7 +208,7 @@ export class SIPJobRepository {
     }
 
     await prisma.sipJob.update({
-      where: { externalId },
+      where: { id },
       data,
     });
   }
@@ -217,11 +217,11 @@ export class SIPJobRepository {
    * Mark job as completed
    */
   async complete(
-    externalId: string,
+    id: string,
     result: { sipPath: string; sipId: string; size: number; documentCount: number },
   ): Promise<void> {
     await prisma.sipJob.update({
-      where: { externalId },
+      where: { id },
       data: {
         status: SipJobStatus.COMPLETED,
         stage: SipJobStage.COMPLETE,
@@ -231,18 +231,18 @@ export class SIPJobRepository {
       },
     });
 
-    this.logger.info(`Job ${externalId} completed successfully`);
+    this.logger.info(`Job ${id} completed successfully`);
   }
 
   /**
    * Mark job as failed
    */
   async fail(
-    externalId: string,
+    id: string,
     error: { code?: string; message: string; details?: unknown },
   ): Promise<void> {
     await prisma.sipJob.update({
-      where: { externalId },
+      where: { id },
       data: {
         status: SipJobStatus.FAILED,
         stage: SipJobStage.ERROR,
@@ -251,21 +251,21 @@ export class SIPJobRepository {
       },
     });
 
-    this.logger.error(`Job ${externalId} failed: ${error.message}`);
+    this.logger.error(`Job ${id} failed: ${error.message}`);
   }
 
   /**
    * Cancel a pending job
    */
-  async cancel(externalId: string, userId: string): Promise<void> {
-    const job = await this.getByExternalId(externalId);
+  async cancel(id: string, userId: string): Promise<void> {
+    const job = await this.getByExternalId(id);
 
     if (!job) {
-      throw new Error(`Job ${externalId} not found`);
+      throw new Error(`Job ${id} not found`);
     }
 
     if (job.userId !== userId) {
-      throw new Error(`User ${userId} does not own job ${externalId}`);
+      throw new Error(`User ${userId} does not own job ${id}`);
     }
 
     if (job.status !== SipJobStatus.PENDING) {
@@ -273,14 +273,14 @@ export class SIPJobRepository {
     }
 
     await prisma.sipJob.update({
-      where: { externalId },
+      where: { id },
       data: {
         status: SipJobStatus.CANCELLED,
         completedAt: new Date(),
       },
     });
 
-    this.logger.info(`Job ${externalId} cancelled by user ${userId}`);
+    this.logger.info(`Job ${id} cancelled by user ${userId}`);
   }
 
   /**

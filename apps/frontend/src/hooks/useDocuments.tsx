@@ -67,30 +67,33 @@ export const useDocuments = () => {
     }
   }, []);
 
-  const getUsersDocuments = useCallback(async () => {
-    try {
-      const result = await listDocuments({
-        query: {
-          page: 1,
-          limit: 20,
-          userId: user?.id,
-        },
-      });
+  const getUsersDocuments = useCallback(
+    async (page?: number) => {
+      try {
+        const result = await listDocuments({
+          query: {
+            page: page ?? 1,
+            limit: 20,
+            userId: user?.id,
+          },
+        });
 
-      if (!result) {
-        throw new Error('No response from server');
+        if (!result) {
+          throw new Error('No response from server');
+        }
+
+        if (result.data?.status === 'error') {
+          console.error(result.data?.status);
+          throw new Error('Authentication required');
+        }
+
+        return result;
+      } catch {
+        throw new Error('Unexpected error');
       }
-
-      if (result.data?.status === 'error') {
-        console.error(result.data?.status);
-        throw new Error('Authentication required');
-      }
-
-      return result;
-    } catch {
-      throw new Error('Unexpected error');
-    }
-  }, [user]);
+    },
+    [user],
+  );
 
   const getGroupDocuments = useCallback(async (groupId: string) => {
     try {

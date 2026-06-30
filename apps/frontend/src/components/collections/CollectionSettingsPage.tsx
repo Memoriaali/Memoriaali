@@ -89,7 +89,7 @@ const CollectionSettingsPage: React.FC = () => {
 
             <h4>{t('manageCollectionFiles')}</h4>
 
-            <Table striped bordered hover responsive variant='dark'>
+            <Table striped bordered hover responsive variant='light'>
               <thead>
                 <tr>
                   <th>{t('file')}</th>

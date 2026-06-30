@@ -28,3 +28,8 @@
   color: var(--bs-text);
   border-color: var(--bs-secondaryBg);
 }
+
+.errorText {
+  margin-bottom: 2vh !important;
+  color: red;
+}

@@ -38,6 +38,14 @@
   transform: translateX(-100%);
 }
 
+.open {
+  transform: translateX(0);
+}
+
+.closed {
+  transform: translateX(-100%);
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .sidebar {

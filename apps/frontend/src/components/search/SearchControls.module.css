@@ -1,3 +1,4 @@
 .amountOfResults {
   font-weight: bold;
+  color: var(--bs-text);
 }

@@ -135,7 +135,7 @@ const AddMembersToGroup: React.FC<AddMembersToGroupProps> = ({ group, handleShow
       {users.length > 0 ? (
         <>
           {submitError && <Alert variant='danger'>{submitError}</Alert>}
-          <Table striped bordered hover responsive variant='dark'>
+          <Table striped bordered hover responsive variant='light'>
             <thead>
               <tr>
                 <th>{t('username')}</th>

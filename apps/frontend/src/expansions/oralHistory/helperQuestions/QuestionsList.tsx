@@ -528,7 +528,7 @@ const QuestionsList = ({
         <p>{t('noQuestions')}</p>
       ) : (
         <>
-          <Table striped bordered hover variant='dark'>
+          <Table striped bordered hover variant='light'>
             <colgroup>
               <col style={{ width: '56px' }} />
               <col />

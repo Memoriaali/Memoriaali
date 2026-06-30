@@ -17,9 +17,9 @@
 import type { SipJob } from '@memoriaali/database';
 import { Logger } from '../../../shared/utils/logger';
 
+import type { CreateSIPRequest } from '../sip.schemas';
 import { queueService } from './queue.service';
 import { sipJobRepository } from './sip-job.repository';
-import type { CreateSIPRequest } from '../sip.schemas';
 
 /**
  * SIP Orchestrator - Manages Job Lifecycle
@@ -155,6 +155,7 @@ export class SIPOrchestratorService {
       }
 
       this.logger.info(`🔄 Processing job ${job.externalId}`);
+      await queueService.runProcessor(job);
 
       // Process job via registered processor
       // The processor is registered in sip.service.ts constructor

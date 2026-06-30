@@ -103,7 +103,7 @@ const UsersInGroup: React.FC<UsersInGroupProps> = ({
       {userInGroupError && <Alert variant='danger'>{userInGroupError}</Alert>}
 
       {deleteUserFromGroupError && <Alert variant='danger'>{deleteUserFromGroupError}</Alert>}
-      <Table striped bordered hover responsive variant='dark'>
+      <Table striped bordered hover responsive variant='light'>
         <thead>
           <tr>
             <th>{t('username')}</th>

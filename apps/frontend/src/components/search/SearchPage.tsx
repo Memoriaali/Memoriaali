@@ -126,7 +126,7 @@ const SearchPage: React.FC = () => {
       <Row>
         {width >= 992 && (
           <Col lg={3}>
-            <h5>{t('filterSearch')}</h5>
+            <h5 className={styles.filterText}>{t('filterSearch')}</h5>
             <SearchFilters
               show
               handleClose={handleCloseFilters}

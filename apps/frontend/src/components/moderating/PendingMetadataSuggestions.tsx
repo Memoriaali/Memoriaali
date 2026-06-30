@@ -71,7 +71,7 @@ const PendingMetadataSuggestions: React.FC = () => {
 
           {submitError && <Alert variant='danger'>{submitError}</Alert>}
 
-          <Table striped bordered hover responsive variant='dark'>
+          <Table striped bordered hover responsive variant='light'>
             <thead>
               <tr>
                 <th>{t('materialColumn')}</th>

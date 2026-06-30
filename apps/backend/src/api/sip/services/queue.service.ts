@@ -24,8 +24,8 @@ import { ERROR_CODES } from '../../../shared/constants/error-codes';
 import { HttpException } from '../../../shared/errors';
 import { Logger } from '../../../shared/utils/logger';
 
-import { sipJobRepository } from './sip-job.repository';
 import type { CreateSIPRequest } from '../sip.schemas';
+import { sipJobRepository } from './sip-job.repository';
 
 /**
  * Job Progress Event (for compatibility with existing controller code)
@@ -66,6 +66,10 @@ export class QueueService {
   private readonly logger = new Logger('QueueService');
   private readonly maxQueueSize = 100;
   private processor: ((job: SipJob) => Promise<void>) | null = null;
+  async runProcessor(job: SipJob) {
+    if (!this.processor) return;
+    await this.processor(job);
+  }
 
   constructor() {
     this.logger.info('🚀 Database-backed queue service initialized');

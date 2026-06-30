@@ -230,21 +230,21 @@ export const rateLimitAuth: RequestHandler = buildRateLimiter({
 // Upload rate limiting
 export const rateLimitUpload: RequestHandler = buildRateLimiter({
   windowMs: 60 * 60 * 1000, // 1 hour
-  maxRequests: 10,
+  maxRequests: 100, // Increased from 10 to 100
   message: 'Upload rate limit exceeded, please try again later.',
 });
 
 // Search operation rate limiting
 export const searchOperationLimiter: RequestHandler = buildRateLimiter({
   windowMs: 1 * 60 * 1000, // 1 minute
-  maxRequests: 100, // Increased from 30 to 100
+  maxRequests: 200, // Increased from 30 to 100, and increased again to 200
   message: 'Too many search requests, please try again later.',
 });
 
 // Admin operation rate limiting (more permissive)
 export const adminOperationLimiter: RequestHandler = buildRateLimiter({
   windowMs: 1 * 60 * 1000, // 1 minute
-  maxRequests: 60,
+  maxRequests: 200, // Increased from 60 to 200
   message: 'Admin operation rate limit exceeded.',
   skip: (req) => {
     // Only apply to admin users
@@ -258,7 +258,7 @@ export const adminOperationLimiter: RequestHandler = buildRateLimiter({
 // Critical operation rate limiting (delete, bulk updates)
 export const criticalOperationLimiter: RequestHandler = buildRateLimiter({
   windowMs: 5 * 60 * 1000, // 5 minutes
-  maxRequests: 10,
+  maxRequests: 50, // Increased from 10 to 50
   message: 'Critical operation rate limit exceeded.',
 });
 

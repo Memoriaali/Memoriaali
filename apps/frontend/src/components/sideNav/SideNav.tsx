@@ -5,6 +5,7 @@ import {
   faAngleLeft,
   faArrowDown,
   faArrowUp,
+  faBorderAll,
   faCircleCheck,
   faFile,
   faFileCirclePlus,
@@ -13,6 +14,7 @@ import {
   faPhotoFilm,
   faUsers,
   faUsersGear,
+  faWrench,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useTranslations } from 'next-intl';
@@ -58,14 +60,6 @@ const SideNav: React.FC<SideNavProps> = ({ sidebarVisible, toggleSidebar }) => {
   // Function for changing group dropdown state
   const handleShowGroupDropdown = () => {
     setShowGroupDropdown((prevCheck) => !prevCheck);
-  };
-
-  // State for showing dropdown for collections
-  const [showCollectionDropdown, setShowCollectionDropdown] = useState(true);
-
-  // Function for changing collections dropdown state
-  const handleShowCollectionDropdown = () => {
-    setShowCollectionDropdown((prevCheck) => !prevCheck);
   };
 
   // State for opening and closing add file modal
@@ -122,7 +116,9 @@ const SideNav: React.FC<SideNavProps> = ({ sidebarVisible, toggleSidebar }) => {
   return (
     <>
       {/* Sidebar */}
-      <div className={`${containerStyles.sidebar} ${sidebarVisible ? 'open' : 'closed'}`}>
+      <div
+        className={`${containerStyles.sidebar} ${sidebarVisible ? containerStyles.open : containerStyles.closed}`}
+      >
         <Button aria-label='Close Menu' onClick={toggleSidebar} className={styles.closeBtn}>
           <FontAwesomeIcon icon={faAngleLeft} />
         </Button>
@@ -144,24 +140,13 @@ const SideNav: React.FC<SideNavProps> = ({ sidebarVisible, toggleSidebar }) => {
               </Nav.Link>
             )}
 
-            {/*
-            <Nav.Link className={styles.navLink} onClick={handleShowCollectionDropdown}>
-              <FontAwesomeIcon icon={faFolderOpen} /> {t('browseCollections')} &ensp;
-              {showCollectionDropdown === true && <FontAwesomeIcon icon={faArrowDown} />}
-              {showCollectionDropdown === false && <FontAwesomeIcon icon={faArrowUp} />}
-            </Nav.Link>
-            <div style={{ display: showCollectionDropdown ? 'none' : 'block' }}>
-              <Link href={`/${locale}/collections`} className={styles.navLinkIndent}>
-                <FontAwesomeIcon icon={faBorderAll} /> {t('collections')}
-              </Link>
-            </div>
+            <Link href={`/${locale}/collections`} className={styles.navLink}>
+              <FontAwesomeIcon icon={faBorderAll} /> {t('collections')}
+            </Link>
 
-            <div style={{ display: showCollectionDropdown ? 'none' : 'block' }}>
-              <Link href={`/${locale}/collectionsettings`} className={styles.navLinkIndent}>
-                <FontAwesomeIcon icon={faWrench} /> {t('collectionTools')}
-              </Link>
-            </div>
-            */}
+            <Link href={`/${locale}/contentmanagement`} className={styles.navLink}>
+              <FontAwesomeIcon icon={faWrench} /> {t('contentManagement')}
+            </Link>
 
             <Nav.Link className={styles.navLink} onClick={handleShowGroupDropdown}>
               <FontAwesomeIcon icon={faUsers} /> {t('groups')} &ensp;
